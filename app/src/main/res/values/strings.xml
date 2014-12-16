@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Agava Jobs</string>
+    <string name="title_premijum">Premijum poslovi</string>
+    <string name="title_hot">Hot poslovi</string>
+    <string name="title_standardni">Standardni poslovi</string>
+    <string name="title_moji">Moji konkursi</string>
+    <string name="title_biografija">Biografija</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Osveži</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="velicine_odece">
+        <item>XS</item>
+        <item>S</item>
+        <item>M</item>
+        <item>L</item>
+        <item>XL</item>
+        <item>XXL</item>
+        <item>XXXL</item>
+    </string-array>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="nexus">#8A033A</color>
+    <color name="muted">#bbb</color>
+    <color name="white">#fff</color>
+    <color name="yellow">#FFD600</color>
+    <color name="opacity_black">#59000000</color>
+</resources>

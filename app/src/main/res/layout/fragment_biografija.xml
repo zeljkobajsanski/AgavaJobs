@@ -1,0 +1,299 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="6dp"
+    tools:context="com.bitseverywhere.agavajobs.fragments.BiografijaFragment">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:id="@+id/osnovniPodaci"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/profil"
+                    android:layout_width="0dp"
+                    android:layout_height="160dip"
+                    android:layout_weight="1"
+                    android:padding="4dip"
+                    android:src="@drawable/head" />
+
+                <ImageView
+                    android:id="@+id/figura"
+                    android:layout_width="0dp"
+                    android:layout_height="160dip"
+                    android:layout_weight="1"
+                    android:padding="4dip"
+                    android:src="@drawable/siluete" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/opacity_black"
+                android:padding="8dp"
+                android:text="Osnovni Podaci"
+                android:textColor="@color/yellow" />
+
+            <EditText
+                android:id="@+id/ime"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:capitalize="sentences"
+                android:hint="Ime"
+                android:singleLine="true"
+                style="@style/EditTextYellowTheme" />
+
+            <EditText
+                android:id="@+id/prezime"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:capitalize="sentences"
+                android:hint="Prezime"
+                android:singleLine="true"
+                style="@style/EditTextYellowTheme" />
+
+            <EditText
+                android:id="@+id/jmbg"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:capitalize="characters"
+                android:drawableBottom="@color/white"
+                android:hint="JMBG/Broj lične karte/Broj pasoša"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                style="@style/EditTextYellowTheme" />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/lblDatumRodjenja"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Datum rođenja"
+                    android:padding="8dp"
+                    android:textSize="14dip"
+                    android:textColor="@color/muted"/>
+                <TextView
+                    android:id="@+id/datumRodjenja"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Datum rođenja"
+                    android:padding="8dp"
+                    android:textSize="14dip"
+                    style="@style/EditTextYellowTheme" />
+            </LinearLayout>
+
+
+            <RadioGroup
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/musko"
+                    android:layout_width="160dip"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Muško"
+                    style="@style/RadioButtonYellowTheme" />
+
+                <RadioButton
+                    android:id="@+id/zensko"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Žensko"
+                    style="@style/RadioButtonYellowTheme" />
+            </RadioGroup>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Visina [cm]"
+                    android:textColor="@color/muted" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Težina [kg]"
+                    android:textColor="@color/muted" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/visina"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    style="@style/EditTextYellowTheme" />
+
+                <EditText
+                    android:id="@+id/tezina"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    style="@style/EditTextYellowTheme"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Veličina odeće"
+                    android:textColor="@color/muted" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Broj cipela"
+                    android:textColor="@color/muted" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/velicinaOdece"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    style="@style/SpinnerYellowTheme"
+                    android:spinnerMode="dialog"
+                    android:theme="@style/YellowTheme"></Spinner>
+
+                <EditText
+                    android:id="@+id/brojCipela"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    style="@style/EditTextYellowTheme"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/opacity_black"
+                android:padding="8dp"
+                android:text="Kontakt Podaci"
+                android:textColor="@color/yellow" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/drzava"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:spinnerMode="dialog"
+                    style="@style/SpinnerYellowTheme"
+                    android:theme="@style/YellowTheme"></Spinner>
+
+                <Spinner
+                    android:id="@+id/mesto"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:spinnerMode="dialog"
+                    style="@style/SpinnerYellowTheme"></Spinner>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/adresa"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Adresa"
+                    android:singleLine="true"
+                    style="@style/EditTextYellowTheme"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/fiksniTelefon"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Fiksni telefon"
+                    android:inputType="phone"
+                    android:singleLine="true"
+                    style="@style/EditTextYellowTheme"/>
+                <EditText
+                    android:id="@+id/mobilniTelefon"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Mobilni telefon"
+                    android:singleLine="true"
+                    android:inputType="phone"
+                    style="@style/EditTextYellowTheme"/>
+            </LinearLayout>
+            <EditText
+                android:id="@+id/email"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="E-mail"
+                android:singleLine="true"
+                android:inputType="textEmailAddress"
+                style="@style/EditTextYellowTheme"/>
+        </LinearLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"
+        android:visibility="visible" />
+</RelativeLayout>

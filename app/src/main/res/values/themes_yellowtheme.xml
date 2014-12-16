@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <style name="YellowTheme" parent="@style/_YellowTheme"/>
+
+  <style name="_YellowTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+
+    <item name="android:editTextStyle">@style/EditTextYellowTheme</item>
+
+    <item name="android:textColorHighlight">#99ffd600</item>
+
+    <item name="android:checkboxStyle">@style/CheckBoxYellowTheme</item>
+
+    <item name="android:radioButtonStyle">@style/RadioButtonYellowTheme</item>
+
+    <item name="android:buttonStyle">@style/ButtonYellowTheme</item>
+
+    <item name="android:imageButtonStyle">@style/ImageButtonYellowTheme</item>
+
+    <item name="android:spinnerStyle">@style/SpinnerYellowTheme</item>
+
+    <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemYellowTheme</item>
+
+    <item name="android:progressBarStyleHorizontal">@style/ProgressBarYellowTheme</item>
+
+    <item name="android:buttonStyleToggle">@style/ToggleYellowTheme</item>
+
+    <item name="android:listViewStyle">@style/ListViewYellowTheme</item>
+
+    <item name="android:listViewWhiteStyle">@style/ListViewYellowTheme.White</item>
+
+    <item name="android:spinnerItemStyle">@style/SpinnerItemYellowTheme</item>
+
+  </style>
+
+</resources>
