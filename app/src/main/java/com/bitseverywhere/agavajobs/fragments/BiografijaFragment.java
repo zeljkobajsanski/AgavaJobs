@@ -32,10 +32,12 @@ import com.bitseverywhere.agavajobs.models.domain.Mesto;
 import com.bitseverywhere.agavajobs.models.domain.StepenStrucneSpreme;
 import com.bitseverywhere.agavajobs.models.domain.Zanimanje;
 import com.bitseverywhere.agavajobs.services.HttpService;
+import com.bitseverywhere.agavajobs.widgets.MultiSelectSpinner;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,6 +71,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     private ImageView profil, figura;
     private CheckBox pusac, uBraku, imaDece;
     private Spinner strucnaSprema, delatnost, zanimanje;
+    private MultiSelectSpinner zeljenaMestaRada;
     private List<Delatnost> delatnostiList;
     private List<StepenStrucneSpreme> stepenStrucneSpremeList;
     private List<Zanimanje> zanimanjaList;
@@ -145,6 +148,9 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         delatnost = (Spinner)view.findViewById(R.id.delatnost);
         delatnost.setOnItemSelectedListener(this);
         zanimanje = (Spinner)view.findViewById(R.id.zanimanje);
+        zeljenaMestaRada = (MultiSelectSpinner)view.findViewById(R.id.zeljenaMestaRada);
+        zeljenaMestaRada.setTemplate(R.layout.simple_spinner);
+
         return view;
     }
 
@@ -166,23 +172,33 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             drzava.setAdapter(adapter);
             postaviDrzavu();
+
+            List<String> naziviDrzava = new ArrayList<>();
+            for (Drzava d : drzave) {
+                naziviDrzava.add(d.getNaziv());
+            }
+            zeljenaMestaRada.setItems(naziviDrzava);
         }
     }
 
     private void setStrucneSpreme(List<StepenStrucneSpreme> strucneSpreme) {
         stepenStrucneSpremeList = strucneSpreme;
-        ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner, stepenStrucneSpremeList);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        strucnaSprema.setAdapter(adapter);
-        postaviStrucnuSpremu();
+        if (getActivity() != null) {
+            ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner, stepenStrucneSpremeList);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            strucnaSprema.setAdapter(adapter);
+            postaviStrucnuSpremu();
+        }
     }
 
     private void setDelatnosti(List<Delatnost> delatnosti) {
         delatnostiList = delatnosti;
-        ArrayAdapter adapter = new ArrayAdapter<>(getActivity(), R.layout.simple_spinner, delatnosti);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        delatnost.setAdapter(adapter);
-        postaviDelatnost();
+        if (getActivity() != null) {
+            ArrayAdapter adapter = new ArrayAdapter<>(getActivity(), R.layout.simple_spinner, delatnosti);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            delatnost.setAdapter(adapter);
+            postaviDelatnost();
+        }
     }
 
     @Override
