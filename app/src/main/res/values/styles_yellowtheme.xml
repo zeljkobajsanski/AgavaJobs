@@ -12,6 +12,7 @@
 
   <style name="CheckBoxYellowTheme" parent="android:Widget.CompoundButton.CheckBox">
       <item name="android:button">@drawable/yellowtheme_btn_check_holo_light</item>
+      <item name="android:textColor">@color/muted</item>
   </style>
 
   <style name="RadioButtonYellowTheme" parent="android:Widget.CompoundButton.RadioButton">

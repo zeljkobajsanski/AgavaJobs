@@ -22,6 +22,10 @@ public class Biografija {
     private String fiksniTelefon;
     private String mobilniTelefon;
     private String email;
+    private boolean pusac, uBraku, imaDece;
+    private int radNaRacunaru;
+    private int stepenStrucneSpremen, delatnost, zanimanje;
+    private String ostalaZnanja;
 
     public int getId() {
         return id;
@@ -173,5 +177,69 @@ public class Biografija {
 
     public boolean isZensko() {
         return getPol() == 2;
+    }
+
+    public boolean isPusac() {
+        return pusac;
+    }
+
+    public void setPusac(boolean pusac) {
+        this.pusac = pusac;
+    }
+
+    public boolean isuBraku() {
+        return uBraku;
+    }
+
+    public void setuBraku(boolean uBraku) {
+        this.uBraku = uBraku;
+    }
+
+    public boolean isImaDece() {
+        return imaDece;
+    }
+
+    public void setImaDece(boolean imaDece) {
+        this.imaDece = imaDece;
+    }
+
+    public int getRadNaRacunaru() {
+        return radNaRacunaru;
+    }
+
+    public void setRadNaRacunaru(int radNaRacunaru) {
+        this.radNaRacunaru = radNaRacunaru;
+    }
+
+    public int getStepenStrucneSpremen() {
+        return stepenStrucneSpremen;
+    }
+
+    public void setStepenStrucneSpremen(int stepenStrucneSpremen) {
+        this.stepenStrucneSpremen = stepenStrucneSpremen;
+    }
+
+    public int getDelatnost() {
+        return delatnost;
+    }
+
+    public void setDelatnost(int delatnost) {
+        this.delatnost = delatnost;
+    }
+
+    public int getZanimanje() {
+        return zanimanje;
+    }
+
+    public void setZanimanje(int zanimanje) {
+        this.zanimanje = zanimanje;
+    }
+
+    public String getOstalaZnanja() {
+        return ostalaZnanja;
+    }
+
+    public void setOstalaZnanja(String ostalaZnanja) {
+        this.ostalaZnanja = ostalaZnanja;
     }
 }

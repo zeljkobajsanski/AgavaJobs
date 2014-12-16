@@ -121,7 +121,7 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
 
         @Override
         protected DetaljiPosla doInBackground(Integer... params) {
-            HttpService http = new HttpService();
+            HttpService http = HttpService.getInstance();
             try {
                 return http.vratiDetaljePosla(params[0]);
             } catch (IOException e) {

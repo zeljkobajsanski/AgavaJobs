@@ -318,7 +318,7 @@ public class NavigationDrawerFragment extends Fragment {
         @Override
         protected Korisnik doInBackground(Integer... params) {
             try {
-                return new HttpService().vratiKorisnika(params[0]);
+                return HttpService.getInstance().vratiKorisnika(params[0]);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {

@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/opacity_black"
                 android:padding="8dp"
-                android:text="Osnovni Podaci"
+                android:text="OSNOVNI PODACI"
                 android:textColor="@color/yellow" />
 
             <EditText
@@ -206,13 +206,43 @@
                     android:singleLine="true"
                     style="@style/EditTextYellowTheme"/>
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dip"
+                android:orientation="horizontal">
+                <CheckBox
+                    android:id="@+id/pusac"
+                    android:text="Pušač"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    style="@style/CheckBoxYellowTheme"
+                    />
+                <CheckBox
+                    android:id="@+id/uBraku"
+                    android:text="U braku"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    style="@style/CheckBoxYellowTheme"
+                    />
+                <CheckBox
+                    android:id="@+id/imaDece"
+                    android:text="Ima dece"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    style="@style/CheckBoxYellowTheme"
+                    />
+                </LinearLayout>
 
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/opacity_black"
                 android:padding="8dp"
-                android:text="Kontakt Podaci"
+                android:text="KONTAKT PODACI"
                 android:textColor="@color/yellow" />
 
             <LinearLayout
@@ -285,7 +315,76 @@
                 android:singleLine="true"
                 android:inputType="textEmailAddress"
                 style="@style/EditTextYellowTheme"/>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="OBRAZOVANJE"
+                android:padding="8dp"
+                android:textColor="@color/yellow"
+                android:background="@color/opacity_black"/>
+            <Spinner
+                android:id="@+id/stepenSrtucneSpreme"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/SpinnerYellowTheme"
+                android:spinnerMode="dialog"
+                ></Spinner>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Spinner
+                    android:id="@+id/delatnost"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:spinnerMode="dialog"
+                    style="@style/SpinnerYellowTheme"
+                    ></Spinner>
+                <Spinner
+                    android:id="@+id/zanimanje"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:spinnerMode="dialog"
+                    style="@style/SpinnerYellowTheme"
+                    ></Spinner>
+
+            </LinearLayout>
+            <Spinner
+                android:id="@+id/radNaRacunaru"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dialog"
+                style="@style/SpinnerYellowTheme"></Spinner>
+            <EditText
+                android:id="@+id/ostalaZnanja"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:lines="5"
+                android:singleLine="false"
+                android:gravity="top"
+                android:hint="Ostala znanja"
+                style="@style/EditTextYellowTheme"/>
+            <!-- Radno iskustvo -->
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="RADNO ISKUSTVO"
+                android:padding="8dp"
+                android:textColor="@color/yellow"
+                android:background="@color/opacity_black"/>
+            <!-- Prihvatljivi poslovi -->
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="OBRAZOVANJE"
+                android:padding="8dp"
+                android:textColor="@color/yellow"
+                android:background="@color/opacity_black"/>
+            <!-- Željena mesta rada -->
         </LinearLayout>
+
     </ScrollView>
 
     <ProgressBar

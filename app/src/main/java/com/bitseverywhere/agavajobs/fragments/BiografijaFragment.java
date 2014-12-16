@@ -3,18 +3,18 @@ package com.bitseverywhere.agavajobs.fragments;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.FragmentTransaction;
+import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,12 +26,14 @@ import android.widget.TextView;
 import com.bitseverywhere.agavajobs.ImageUtils;
 import com.bitseverywhere.agavajobs.R;
 import com.bitseverywhere.agavajobs.models.domain.Biografija;
+import com.bitseverywhere.agavajobs.models.domain.Delatnost;
 import com.bitseverywhere.agavajobs.models.domain.Drzava;
 import com.bitseverywhere.agavajobs.models.domain.Mesto;
+import com.bitseverywhere.agavajobs.models.domain.StepenStrucneSpreme;
+import com.bitseverywhere.agavajobs.models.domain.Zanimanje;
 import com.bitseverywhere.agavajobs.services.HttpService;
 
 import org.json.JSONException;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -53,6 +55,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     private static final int REQUEST_PROFILE_PICTURE = 1;
     private static final int REQUEST_FIGURE_PICTURE = 2;
     private static final String[] VELICINE_ODECE = new String[]{"XS", "S", "M", "L", "XL", "XXL", "XXXL"};
+    private static final String[] POZNAVANJE_RADA_NA_RACUNARU = new String[]{"Ne koristi", "Početni nivo", "Napredni nivo", "Ekspert"};
     private int id;
     private Biografija biografija = new Biografija();
     private List<Drzava> drzave;
@@ -61,9 +64,14 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
                      mobilniTelefon, email;
     private TextView datumRodjenja, lblDatumRodjenja;
     private RadioButton musko, zensko;
-    private Spinner velicinaOdece, drzava, mesto;
+    private Spinner velicinaOdece, drzava, mesto, radNaRacunaru;
     private ProgressBar progressBar;
     private ImageView profil, figura;
+    private CheckBox pusac, uBraku, imaDece;
+    private Spinner strucnaSprema, delatnost, zanimanje;
+    private List<Delatnost> delatnostiList;
+    private List<StepenStrucneSpreme> stepenStrucneSpremeList;
+    private List<Zanimanje> zanimanjaList;
 
 
     public static BiografijaFragment newInstance(int id) {
@@ -86,6 +94,8 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         }
         refresh();
         new UcitajDrzaveTask().execute();
+        new UcitajStrunceSpremeTask().execute();
+        new UcitajDelatnostiTask().execute();
     }
 
     @Override
@@ -124,6 +134,17 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         email = (EditText)view.findViewById(R.id.email);
         lblDatumRodjenja = ((TextView)view.findViewById(R.id.lblDatumRodjenja));
         lblDatumRodjenja.setOnClickListener(this);
+        pusac = (CheckBox)view.findViewById(R.id.pusac);
+        uBraku = (CheckBox)view.findViewById(R.id.uBraku);
+        imaDece = (CheckBox)view.findViewById(R.id.imaDece);
+        radNaRacunaru = (Spinner)view.findViewById(R.id.radNaRacunaru);
+        adapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner, POZNAVANJE_RADA_NA_RACUNARU);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        radNaRacunaru.setAdapter(adapter);
+        strucnaSprema = (Spinner)view.findViewById(R.id.stepenSrtucneSpreme);
+        delatnost = (Spinner)view.findViewById(R.id.delatnost);
+        delatnost.setOnItemSelectedListener(this);
+        zanimanje = (Spinner)view.findViewById(R.id.zanimanje);
         return view;
     }
 
@@ -148,6 +169,22 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         }
     }
 
+    private void setStrucneSpreme(List<StepenStrucneSpreme> strucneSpreme) {
+        stepenStrucneSpremeList = strucneSpreme;
+        ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner, stepenStrucneSpremeList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        strucnaSprema.setAdapter(adapter);
+        postaviStrucnuSpremu();
+    }
+
+    private void setDelatnosti(List<Delatnost> delatnosti) {
+        delatnostiList = delatnosti;
+        ArrayAdapter adapter = new ArrayAdapter<>(getActivity(), R.layout.simple_spinner, delatnosti);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        delatnost.setAdapter(adapter);
+        postaviDelatnost();
+    }
+
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (parent == drzava) {
@@ -164,6 +201,13 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             biografija.setMesto(izabranoMesto.getId());
         } else if (parent == velicinaOdece) {
             biografija.setVelicinaOdece(position);
+        } else if (parent == delatnost) {
+            zanimanjaList = delatnostiList.get(position).getZanimanja();
+            ArrayAdapter adapter = new ArrayAdapter<>(getActivity(),
+                    R.layout.simple_spinner, zanimanjaList);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            zanimanje.setAdapter(adapter);
+            postaviZanimanje();
         }
     }
 
@@ -200,8 +244,15 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             fiksniTelefon.setText(biografija.getFiksniTelefon());
             mobilniTelefon.setText(biografija.getMobilniTelefon());
             email.setText(biografija.getEmail());
+            pusac.setChecked(biografija.isPusac());
+            uBraku.setChecked(biografija.isuBraku());
+            imaDece.setChecked(biografija.isImaDece());
+            radNaRacunaru.setSelection(biografija.getRadNaRacunaru());
             postaviDrzavu();
             postaviMesto();
+            postaviStrucnuSpremu();
+            postaviDelatnost();
+            postaviZanimanje();
 
         }
 
@@ -233,6 +284,42 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         }
     }
 
+    private void postaviStrucnuSpremu() {
+        if (this.biografija != null && stepenStrucneSpremeList != null) {
+            Biografija biografija = this.biografija;
+            for (int i = 0; i < stepenStrucneSpremeList.size(); i++) {
+                if (stepenStrucneSpremeList.get(i).getId() == biografija.getStepenStrucneSpremen()) {
+                    strucnaSprema.setSelection(i);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void postaviDelatnost() {
+        if (this.biografija != null && delatnostiList != null) {
+            Biografija biografija = this.biografija;
+            for (int i = 0; i < delatnostiList.size(); i++) {
+                if (delatnostiList.get(i).getId() == biografija.getDelatnost()) {
+                    delatnost.setSelection(i);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void postaviZanimanje() {
+        if (this.biografija != null && zanimanjaList != null) {
+            Biografija biografija = this.biografija;
+            for (int i = 0; i < zanimanjaList.size(); i++) {
+                if (zanimanjaList.get(i).getId() == biografija.getZanimanje()) {
+                    zanimanje.setSelection(i);
+                    break;
+                }
+            }
+        }
+    }
+
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
@@ -247,7 +334,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             startActivityForResult(intent, REQUEST_FIGURE_PICTURE);
         } else if (v == datumRodjenja || v == lblDatumRodjenja) {
             final String dateFormat = "dd.MM.yyyy";
-            Date date = null;
+            Date date;
             try {
                 date = new SimpleDateFormat(dateFormat).parse(biografija.getDatumRodjenja());
             } catch (ParseException e) {
@@ -268,7 +355,6 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             dialog.show();
         }
     }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_PROFILE_PICTURE && resultCode == Activity.RESULT_OK) {
@@ -285,10 +371,6 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         }
     }
 
-    public Biografija getBiografija() {
-        return biografija;
-    }
-
     public void setDatumRodjenja(String noviDatumRodjenja) {
         biografija.setDatumRodjenja(noviDatumRodjenja);
         datumRodjenja.setText(noviDatumRodjenja);
@@ -299,7 +381,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         @Override
         protected List<Drzava> doInBackground(Void... params) {
             try {
-                return new HttpService().vratiDrzave();
+                return HttpService.getInstance().vratiDrzave();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
@@ -313,7 +395,6 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             BiografijaFragment.this.setDrzave(drzave);
         }
     }
-
     private class UcitajBiografijuTask extends AsyncTask<Integer, Void, Biografija> {
 
         @Override
@@ -326,7 +407,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         @Override
         protected Biografija doInBackground(Integer... params) {
             try {
-                return new HttpService().vratiBiografiju(params[0]);
+                return HttpService.getInstance().vratiBiografiju(params[0]);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
@@ -341,6 +422,43 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             BiografijaFragment.this.progressBar.setVisibility(View.GONE);
         }
     }
+    private class UcitajStrunceSpremeTask extends AsyncTask<Void, Void, List<StepenStrucneSpreme>> {
 
+        @Override
+        protected List<StepenStrucneSpreme> doInBackground(Void... params) {
+            try {
+                return HttpService.getInstance().vratiStrucneSpreme();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return new ArrayList<>();
+        }
+        @Override
+        protected void onPostExecute(List<StepenStrucneSpreme> stepenStrucneSpreme) {
+            BiografijaFragment.this.setStrucneSpreme(stepenStrucneSpreme);
+        }
+
+    }
+    private class UcitajDelatnostiTask extends AsyncTask<Void, Void, List<Delatnost>> {
+
+        @Override
+        protected List<Delatnost> doInBackground(Void... params) {
+            try {
+                return HttpService.getInstance().vratiDelatnosti();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return new ArrayList<>();
+        }
+        @Override
+        protected void onPostExecute(List<Delatnost> delatnosti) {
+            BiografijaFragment.this.setDelatnosti(delatnosti);
+        }
+
+    }
 
 }

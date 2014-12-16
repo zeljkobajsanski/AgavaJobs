@@ -1,11 +1,14 @@
 package com.bitseverywhere.agavajobs.services;
 
 import com.bitseverywhere.agavajobs.models.domain.Biografija;
+import com.bitseverywhere.agavajobs.models.domain.Delatnost;
 import com.bitseverywhere.agavajobs.models.domain.DetaljiPosla;
 import com.bitseverywhere.agavajobs.models.domain.Drzava;
 import com.bitseverywhere.agavajobs.models.domain.Korisnik;
 import com.bitseverywhere.agavajobs.models.domain.Mesto;
 import com.bitseverywhere.agavajobs.models.domain.Posao;
+import com.bitseverywhere.agavajobs.models.domain.StepenStrucneSpreme;
+import com.bitseverywhere.agavajobs.models.domain.Zanimanje;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -32,6 +35,16 @@ public class HttpService {
     private static final String BASE_URL = "http://agava.rs/";
 
     private static final String API_URL = "http://mobile.agava.rs/api/";
+
+    private static HttpService instance = new HttpService();
+
+    private HttpService() {
+
+    }
+
+    public static HttpService getInstance() {
+        return instance;
+    }
 
     public List<Posao> vratiPremijumPoslove() throws IOException, JSONException {
         return vratiPoslove(API_URL + "poslovi/premium");
@@ -116,6 +129,20 @@ public class HttpService {
         biografija.setFiksniTelefon(json.getString("FiksniTelefon"));
         biografija.setMobilniTelefon(json.getString("MobilniTelefon"));
         biografija.setEmail(json.getString("Email"));
+        biografija.setPusac(json.getBoolean("Pusac"));
+        biografija.setuBraku(json.getBoolean("UBraku"));
+        biografija.setImaDece(json.getBoolean("ImaDece"));
+        biografija.setRadNaRacunaru(json.optInt("RadNaRacunaru", 0));
+        if (!json.isNull("StrucnaSprema")) {
+            biografija.setStepenStrucneSpremen(json.getInt("StrucnaSprema"));
+        }
+        if (!json.isNull("VrstaZanimanja")) {
+            biografija.setDelatnost(json.getInt("VrstaZanimanja"));
+        }
+        if (!json.isNull("Zanimanje")) {
+            biografija.setZanimanje(json.getInt("Zanimanje"));
+        }
+        biografija.setOstalaZnanja(json.getString("OstalaZnanja"));
         return biografija;
     }
 
@@ -124,6 +151,37 @@ public class HttpService {
         JSONArray result = new JSONArray(response);
         return vratiPoslove(result);
     }
+
+    public List<StepenStrucneSpreme> vratiStrucneSpreme() throws IOException, JSONException {
+        String response = httpGet(API_URL + "sifarnici/VratiStrucneSpreme");
+        JSONArray json = new JSONArray(response);
+        List<StepenStrucneSpreme> sss = new ArrayList<>();
+        for (int i = 0; i < json.length(); i++) {
+            JSONObject jsonObj = json.getJSONObject(i);
+            sss.add(new StepenStrucneSpreme(jsonObj.getInt("Id"), jsonObj.getString("Naziv")));
+        }
+        return sss;
+    }
+
+    public List<Delatnost> vratiDelatnosti() throws IOException, JSONException {
+        String response = httpGet(API_URL + "sifarnici/VratiVrsteZanimanja");
+        JSONArray json = new JSONArray(response);
+        List<Delatnost> delatnosti = new ArrayList<>();
+        for (int i = 0; i < json.length(); i++) {
+            JSONObject jsonObject = json.getJSONObject(i);
+            Delatnost d = new Delatnost(jsonObject.getInt("Id"), jsonObject.getString("Naziv"));
+            JSONArray zanimanjaJson = jsonObject.getJSONArray("Zanimanja");
+            for (int j = 0; j < zanimanjaJson.length(); j++) {
+                JSONObject zanimanjeJson = zanimanjaJson.getJSONObject(j);
+                d.getZanimanja().add(new Zanimanje(zanimanjeJson.getInt("Id"),
+                        zanimanjeJson.getString("Naziv")));
+            }
+            delatnosti.add(d);
+        }
+
+        return delatnosti;
+    }
+
 
     private List<Posao> vratiPoslove(JSONArray jsonArray) throws JSONException {
         ArrayList<Posao> poslovi = new ArrayList<>();

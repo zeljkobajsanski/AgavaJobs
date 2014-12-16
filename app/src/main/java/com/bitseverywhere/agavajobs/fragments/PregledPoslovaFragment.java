@@ -105,7 +105,7 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
         @Override
         protected List<Posao> doInBackground(Integer... params) {
             try {
-                HttpService httpService = new HttpService();
+                HttpService httpService = HttpService.getInstance();
                 switch (params[0]) {
                     case PREMIJUM_POSLOVI:
                         return httpService.vratiPremijumPoslove();
