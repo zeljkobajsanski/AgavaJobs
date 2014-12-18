@@ -3,9 +3,16 @@ package com.bitseverywhere.agavajobs.fragments;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
+import com.bitseverywhere.agavajobs.R;
 import com.bitseverywhere.agavajobs.activities.IMainActivity;
 import com.bitseverywhere.agavajobs.adapters.PosloviAdapter;
 import com.bitseverywhere.agavajobs.models.domain.Posao;
@@ -25,15 +32,13 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
     public static final int HOT_POSLOVI = 1;
     public static final int STANDARDNI_POSLOVI = 2;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String TIP_POSLA = "tip";
 
     private int mTipPosla;
 
     private IMainActivity mListener;
-
-    private List<Posao> mPoslovi = new ArrayList<>();
+    private ProgressBar progressBar;
+    private PosloviAdapter posloviAdapter;
 
     public static PregledPoslovaFragment newInstance(int tipPosla) {
         PregledPoslovaFragment fragment = new PregledPoslovaFragment();
@@ -53,13 +58,22 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             mTipPosla = getArguments().getInt(TIP_POSLA);
         }
+        posloviAdapter = new PosloviAdapter(getActivity());
+        setListAdapter(posloviAdapter);
         refresh();
     }
 
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_poslovi, container, false);
+        progressBar = (ProgressBar)view.findViewById(R.id.progressBar);
+        return view;
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -78,12 +92,27 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
         mListener = null;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.poslovi, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                refresh();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         if (null != mListener) {
-            mListener.izabranPosao(mPoslovi.get(position).getID());
+            mListener.izabranPosao(posloviAdapter.getItem(position).getID());
         }
     }
 
@@ -93,14 +122,18 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
     }
 
     private void rebind(List<Posao> poslovi) {
-        Activity activity = getActivity();
-        if (activity != null) {
-            mPoslovi = poslovi;
-            setListAdapter(new PosloviAdapter(activity, poslovi));
-        }
+        posloviAdapter.clear();
+        posloviAdapter.addAll(poslovi);
     }
 
     private class UcitajPosloveTask extends AsyncTask<Integer, Void, List<Posao>> {
+
+        @Override
+        protected void onPreExecute() {
+            if (PregledPoslovaFragment.this.progressBar != null) {
+                PregledPoslovaFragment.this.progressBar.setVisibility(View.VISIBLE);
+            }
+        }
 
         @Override
         protected List<Posao> doInBackground(Integer... params) {
@@ -125,6 +158,9 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
         @Override
         protected void onPostExecute(List<Posao> poslovi) {
             PregledPoslovaFragment.this.rebind(poslovi);
+            if (PregledPoslovaFragment.this.progressBar != null) {
+                PregledPoslovaFragment.this.progressBar.setVisibility(View.GONE);
+            }
         }
     }
 }

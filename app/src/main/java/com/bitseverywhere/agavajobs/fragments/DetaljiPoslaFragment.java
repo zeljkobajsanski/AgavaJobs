@@ -4,6 +4,9 @@ package com.bitseverywhere.agavajobs.fragments;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -61,7 +64,7 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
             id = getArguments().getInt(ID_POSLA);
             refresh();
         }
-
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -84,6 +87,28 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.detalji_posla, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                refresh();
+                return true;
+            case R.id.action_ok:
+                konkurisi();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void konkurisi() {
+        // TODO: Impementirati konkurisanje
+    }
 
     @Override
     public void refresh() {

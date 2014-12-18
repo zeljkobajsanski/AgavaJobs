@@ -92,7 +92,7 @@ public class NavigationDrawerFragment extends Fragment {
             mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
             mFromSavedInstanceState = true;
         }
-        new GetUserTask().execute(6);
+        new GetUserTask().execute(5);
         // Select either the default item (0) or the last selected item.
         //selectItem(mCurrentSelectedPosition);
     }
@@ -298,7 +298,7 @@ public class NavigationDrawerFragment extends Fragment {
         if (slika != null) {
             mAvatar.setImageBitmap(slika);
         } else {
-            mAvatar.setImageDrawable(getResources().getDrawable(R.drawable.anonymous));
+            mAvatar.setImageDrawable(getResources().getDrawable(R.drawable.anonymous2));
         }
         mEmail.setText(korisnik.getEmail());
     }

@@ -2,22 +2,31 @@ package com.bitseverywhere.agavajobs.fragments;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -25,19 +34,21 @@ import android.widget.TextView;
 
 import com.bitseverywhere.agavajobs.ImageUtils;
 import com.bitseverywhere.agavajobs.R;
+import com.bitseverywhere.agavajobs.Utils;
+import com.bitseverywhere.agavajobs.adapters.RadnoIskustvoAdapter;
 import com.bitseverywhere.agavajobs.models.domain.Biografija;
 import com.bitseverywhere.agavajobs.models.domain.Delatnost;
 import com.bitseverywhere.agavajobs.models.domain.Drzava;
+import com.bitseverywhere.agavajobs.models.domain.Jezik;
 import com.bitseverywhere.agavajobs.models.domain.Mesto;
+import com.bitseverywhere.agavajobs.models.domain.RadnoIskustvo;
 import com.bitseverywhere.agavajobs.models.domain.StepenStrucneSpreme;
 import com.bitseverywhere.agavajobs.models.domain.Zanimanje;
 import com.bitseverywhere.agavajobs.services.HttpService;
-import com.bitseverywhere.agavajobs.widgets.MultiSelectSpinner;
 
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,10 +71,11 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     private static final String[] POZNAVANJE_RADA_NA_RACUNARU = new String[]{"Ne koristi", "Početni nivo", "Napredni nivo", "Ekspert"};
     private int id;
     private Biografija biografija = new Biografija();
-    private List<Drzava> drzave;
-    private List<Mesto> mesta;
-    private EditText ime, prezime, brojPasosa, visina, tezina, brojCipela, adresa, fiksniTelefon,
-                     mobilniTelefon, email;
+    private ArrayAdapter<Drzava> drzaveAdapter;
+    private ArrayAdapter<Mesto> mestaAdapter;
+    private EditText ime, prezime, brojPasosa, adresa, fiksniTelefon,
+                     mobilniTelefon, email, ostalaZnanja;
+    private EditText visina, tezina, brojCipela;
     private TextView datumRodjenja, lblDatumRodjenja;
     private RadioButton musko, zensko;
     private Spinner velicinaOdece, drzava, mesto, radNaRacunaru;
@@ -71,11 +83,21 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     private ImageView profil, figura;
     private CheckBox pusac, uBraku, imaDece;
     private Spinner strucnaSprema, delatnost, zanimanje;
-    private MultiSelectSpinner zeljenaMestaRada;
-    private List<Delatnost> delatnostiList;
-    private List<StepenStrucneSpreme> stepenStrucneSpremeList;
-    private List<Zanimanje> zanimanjaList;
-
+    private ArrayAdapter<Delatnost> delatnostiAdapter;
+    private ArrayAdapter<StepenStrucneSpreme> stepenStrucneSpremeAdapter;
+    private ArrayAdapter<Zanimanje> zanimanjaAdapter;
+    private ImageButton btnDodajMestoRada, btnObrisiMestoRada, btnDodajRadnoIskustvo, btnObrisiRadnoIskustvo;
+    private String[] naziviDrzava;
+    private ListView zeljenaMestaRada, radnoIskustvo, prihvatljivaZanimanja, pasosi, jezici;
+    private ArrayAdapter<Drzava> zeljenaMestaRadaAdapter;
+    private RadnoIskustvoAdapter radnoIskustvoAdapter;
+    private ArrayAdapter<Zanimanje> prihvatljivaZanimanjaAdapter;
+    private ArrayAdapter<Drzava> pasosiAdapter;
+    private ArrayAdapter<Jezik> jeziciAdapter;
+    private List<Jezik> sviJezici;
+    private CheckBox a, b, c, d, e, f, m;
+    private EditText osudjivan, zdravstveniProblemi, ostaleNapomene;
+    private RadioButton nezaposlen, zaposlen, student;
 
     public static BiografijaFragment newInstance(int id) {
         BiografijaFragment fragment = new BiografijaFragment();
@@ -95,10 +117,23 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         if (getArguments() != null) {
             id = getArguments().getInt(ID);
         }
-        refresh();
-        new UcitajDrzaveTask().execute();
-        new UcitajStrunceSpremeTask().execute();
-        new UcitajDelatnostiTask().execute();
+        setHasOptionsMenu(true);
+        drzaveAdapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner);
+        drzaveAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        zeljenaMestaRadaAdapter = new ArrayAdapter(getActivity(), R.layout.checked_list_item);
+        zeljenaMestaRadaAdapter.setNotifyOnChange(true);
+        stepenStrucneSpremeAdapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner);
+        stepenStrucneSpremeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mestaAdapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner);
+        mestaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        delatnostiAdapter = new ArrayAdapter<>(getActivity(), R.layout.simple_spinner);
+        delatnostiAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        zanimanjaAdapter = new ArrayAdapter<>(getActivity(), R.layout.simple_spinner);
+        zanimanjaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        radnoIskustvoAdapter = new RadnoIskustvoAdapter(getActivity());
+        prihvatljivaZanimanjaAdapter = new ArrayAdapter<Zanimanje>(getActivity(), R.layout.checked_list_item);
+        pasosiAdapter = new ArrayAdapter<Drzava>(getActivity(), R.layout.checked_list_item);
+        jeziciAdapter = new ArrayAdapter<Jezik>(getActivity(), R.layout.checked_list_item);
     }
 
     @Override
@@ -109,9 +144,9 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         ime = (EditText)view.findViewById(R.id.ime);
         prezime = (EditText)view.findViewById(R.id.prezime);
         brojPasosa = (EditText)view.findViewById(R.id.jmbg);
-        visina = (EditText)view.findViewById(R.id.visina);
-        tezina = (EditText)view.findViewById(R.id.tezina);
-        brojCipela = (EditText)view.findViewById(R.id.brojCipela);
+        this.visina = (EditText)view.findViewById(R.id.visina);
+        this.tezina = (EditText)view.findViewById(R.id.tezina);
+        this.brojCipela = (EditText)view.findViewById(R.id.brojCipela);
         datumRodjenja = (TextView)view.findViewById(R.id.datumRodjenja);
         datumRodjenja.setOnClickListener(this);
         musko = (RadioButton)view.findViewById(R.id.musko);
@@ -122,10 +157,17 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         velicinaOdece.setOnItemSelectedListener(this);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         velicinaOdece.setAdapter(adapter);
+        ostalaZnanja = (EditText)view.findViewById(R.id.ostalaZnanja);
+
         drzava = (Spinner)view.findViewById(R.id.drzava);
         drzava.setOnItemSelectedListener(this);
+        drzava.setAdapter(drzaveAdapter);
+
+
         mesto = (Spinner)view.findViewById(R.id.mesto);
         mesto.setOnItemSelectedListener(this);
+        mesto.setAdapter(mestaAdapter);
+
         progressBar = (ProgressBar)view.findViewById(R.id.progressBar);
         profil = (ImageView)view.findViewById(R.id.profil);
         profil.setOnClickListener(this);
@@ -140,89 +182,359 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         pusac = (CheckBox)view.findViewById(R.id.pusac);
         uBraku = (CheckBox)view.findViewById(R.id.uBraku);
         imaDece = (CheckBox)view.findViewById(R.id.imaDece);
+
         radNaRacunaru = (Spinner)view.findViewById(R.id.radNaRacunaru);
         adapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner, POZNAVANJE_RADA_NA_RACUNARU);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         radNaRacunaru.setAdapter(adapter);
+
         strucnaSprema = (Spinner)view.findViewById(R.id.stepenSrtucneSpreme);
+        strucnaSprema.setAdapter(stepenStrucneSpremeAdapter);
+
         delatnost = (Spinner)view.findViewById(R.id.delatnost);
         delatnost.setOnItemSelectedListener(this);
-        zanimanje = (Spinner)view.findViewById(R.id.zanimanje);
-        zeljenaMestaRada = (MultiSelectSpinner)view.findViewById(R.id.zeljenaMestaRada);
-        zeljenaMestaRada.setTemplate(R.layout.simple_spinner);
+        delatnost.setAdapter(delatnostiAdapter);
 
+        zanimanje = (Spinner)view.findViewById(R.id.zanimanje);
+        zanimanje.setAdapter(zanimanjaAdapter);
+
+        btnDodajMestoRada = (ImageButton)view.findViewById(R.id.btnDodajMestoRada);
+        btnDodajMestoRada.setOnClickListener(this);
+        btnObrisiMestoRada = (ImageButton)view.findViewById(R.id.btnObrisiMestaRada);
+        btnObrisiMestoRada.setOnClickListener(this);
+        zeljenaMestaRada = (ListView)view.findViewById(R.id.zeljenaMestaRada);
+        zeljenaMestaRada.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+        zeljenaMestaRada.setAdapter(zeljenaMestaRadaAdapter);
+        Utils.setListViewHeightBasedOnChildren(zeljenaMestaRada);
+        radnoIskustvo = (ListView)view.findViewById(R.id.radnoIskustvo);
+        radnoIskustvo.setAdapter(radnoIskustvoAdapter);
+        radnoIskustvo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                RadnoIskustvo ri = radnoIskustvoAdapter.getItem(position);
+                RadnoIskustvoFragment dialog = RadnoIskustvoFragment.newInstance(ri.getId(), ri.getPoslodavac(),
+                        ri.getPeriod(), ri.getOpis());
+                dialog.setEdit(ri, true);
+                dialog.show(getFragmentManager(), null);
+            }
+        });
+
+        btnDodajRadnoIskustvo = (ImageButton)view.findViewById(R.id.btnDodajIskustvo);
+        btnDodajRadnoIskustvo.setOnClickListener(this);
+        btnObrisiRadnoIskustvo = (ImageButton)view.findViewById(R.id.btnObrisiIskustvo);
+        btnObrisiRadnoIskustvo.setOnClickListener(this);
+
+        prihvatljivaZanimanja = (ListView)view.findViewById(R.id.prihvatljivaZanimanja);
+        prihvatljivaZanimanja.setAdapter(prihvatljivaZanimanjaAdapter);
+        prihvatljivaZanimanja.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+        ImageButton btnDodajPrihvatljivoZanimanje = (ImageButton)view.findViewById(R.id.btnDodajPrihvatljivaZanimanja);
+        btnDodajPrihvatljivoZanimanje.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PrihvatljivaZanimanjaFragment dialog = PrihvatljivaZanimanjaFragment.newInstance(delatnostiAdapter);
+                dialog.show(getFragmentManager(), null);
+            }
+        });
+        ImageButton btnObrisiPrihvatljivoZanimanje = (ImageButton)view.findViewById(R.id.btnObrisiPrihvatljivaZanimanja);
+        btnObrisiPrihvatljivoZanimanje.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SparseBooleanArray pos = prihvatljivaZanimanja.getCheckedItemPositions();
+                for (int i = 0; i < prihvatljivaZanimanja.getCount(); i++) {
+                    if (pos.get(i)) {
+                        Zanimanje zanimanje = prihvatljivaZanimanjaAdapter.getItem(i);
+                        prihvatljivaZanimanjaAdapter.remove(zanimanje);
+                        biografija.getPrihvatljivaZanimanja().remove(zanimanje);
+                    }
+                }
+                pos.clear();
+                prihvatljivaZanimanjaAdapter.notifyDataSetChanged();
+                Utils.setListViewHeightBasedOnChildren(prihvatljivaZanimanja);
+            }
+        });
+        pasosi = (ListView)view.findViewById(R.id.pasosi);
+        pasosi.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+        pasosi.setAdapter(pasosiAdapter);
+        ImageButton btnDodajPasos = (ImageButton)view.findViewById(R.id.btnDodajPasos);
+        btnDodajPasos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Izaberite državu");
+                final boolean[] choosen = new boolean[naziviDrzava.length];
+                for (int i = 0; i < drzaveAdapter.getCount(); i++) {
+                    for (int j = 0; j < biografija.getPasosi().size(); j++) {
+                        if (drzaveAdapter.getItem(i).getId() == biografija.getPasosi().get(j).getId()) {
+                            choosen[i] = true;
+                        }
+                    }
+                }
+                builder.setMultiChoiceItems(naziviDrzava, choosen, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        choosen[which] = isChecked;
+                    }
+                });
+                builder.setPositiveButton("Prihvati", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        for (int i = 0; i < choosen.length; i++) {
+                            Drzava drzava = drzaveAdapter.getItem(i);
+                            if (choosen[i]) {
+                                if (!biografija.getPasosi().contains(drzava)) {
+                                    biografija.getPasosi().add(drzava);
+                                    pasosiAdapter.add(drzava);
+                                }
+                            } else {
+                                biografija.getPasosi().remove(drzava);
+                                pasosiAdapter.remove(drzava);
+                            }
+                        }
+                        Utils.setListViewHeightBasedOnChildren(pasosi);
+                    }
+                });
+                builder.setNegativeButton("Otkaži", null);
+                builder.show();
+            }
+        });
+        ImageButton btnObrisiPasos = (ImageButton)view.findViewById(R.id.btnObrisiPasos);
+        btnObrisiPasos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SparseBooleanArray checkBoxes = pasosi.getCheckedItemPositions();
+                List<Drzava> brisi = new ArrayList<Drzava>();
+                for (int i = 0; i < pasosiAdapter.getCount(); i++) {
+                    if (checkBoxes.get(i)) {
+                        Drzava pasos = pasosiAdapter.getItem(i);
+                        brisi.add(pasos);
+                    }
+                }
+                for (Drzava pasos : brisi) {
+                    pasosiAdapter.remove(pasos);
+                    biografija.getPasosi().remove(pasos);
+                }
+                checkBoxes.clear();
+                Utils.setListViewHeightBasedOnChildren(pasosi);
+            }
+        });
+        jezici = (ListView)view.findViewById(R.id.jezici);
+        jezici.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+        jezici.setAdapter(jeziciAdapter);
+
+        ImageButton btnDodajJezik = (ImageButton)view.findViewById(R.id.btnDodajJezik);
+        btnDodajJezik.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Izaberite jezike");
+                final int count = sviJezici.size();
+                String[] naziviJezika = new String[count];
+                final boolean[] izabraniJezici = new boolean[count];
+
+                for (int i = 0; i < count; i++) {
+                    Jezik jezik = sviJezici.get(i);
+                    naziviJezika[i] = jezik.getNaziv();
+                    izabraniJezici[i] = false;
+                    for (int j = 0; j < biografija.getJezici().size(); j++) {
+                        if (biografija.getJezici().get(j).equals(jezik)) {
+                            izabraniJezici[i] = true;
+                            break;
+                        }
+                    }
+                }
+                builder.setMultiChoiceItems(naziviJezika, izabraniJezici, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                          izabraniJezici[which] = isChecked;
+                    }
+                });
+                builder.setPositiveButton("Potvrdi", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        for (int i = 0; i < count; i++) {
+                            Jezik jezik = sviJezici.get(i);
+                            boolean izabran = izabraniJezici[i];
+                            if (izabran) {
+                                if (!biografija.getJezici().contains(jezik)) {
+                                    biografija.getJezici().add(jezik);
+                                    jeziciAdapter.add(jezik);
+                                }
+                            } else {
+                                jeziciAdapter.remove(jezik);
+                                biografija.getJezici().remove(jezik);
+                            }
+                        }
+                        Utils.setListViewHeightBasedOnChildren(jezici);
+                    }
+                });
+                builder.setNegativeButton("Otkaži", null);
+                builder.show();
+            }
+        });
+        ImageButton btnObrisiJezik = (ImageButton)view.findViewById(R.id.btnObrisiJezik);
+        btnObrisiJezik.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SparseBooleanArray checkboxes = jezici.getCheckedItemPositions();
+                int count = jeziciAdapter.getCount();
+                List<Jezik> brisi = new ArrayList<Jezik>();
+                for (int i = 0; i < count; i++) {
+                    if (checkboxes.get(i)) {
+                        Jezik jezik = jeziciAdapter.getItem(i);
+                        brisi.add(jezik);
+                    }
+                }
+                for (Jezik jezik : brisi) {
+                    biografija.getJezici().remove(jezik);
+                    jeziciAdapter.remove(jezik);
+                }
+                checkboxes.clear();
+                Utils.setListViewHeightBasedOnChildren(jezici);
+            }
+        });
+        a = (CheckBox)view.findViewById(R.id.A);
+        b = (CheckBox)view.findViewById(R.id.B);
+        c = (CheckBox)view.findViewById(R.id.C);
+        d = (CheckBox)view.findViewById(R.id.D);
+        e = (CheckBox)view.findViewById(R.id.E);
+        f = (CheckBox)view.findViewById(R.id.F);
+        m = (CheckBox)view.findViewById(R.id.M);
+        osudjivan = (EditText)view.findViewById(R.id.osudjivan);
+        zdravstveniProblemi = (EditText)view.findViewById(R.id.zdravstveniProblemi);
+        ostaleNapomene = (EditText)view.findViewById(R.id.ostaleNapomene);
+        nezaposlen = (RadioButton)view.findViewById(R.id.nezaposlen);
+        zaposlen = (RadioButton)view.findViewById(R.id.zaposlen);
+        student = (RadioButton)view.findViewById(R.id.student);
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        new UcitajSifranikeTask().execute();
+        refresh();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.biografija, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_ok:
+                sacuvaj();
+                return true;
+            case R.id.action_refresh:
+                refresh();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void sacuvaj() {
+        biografija.setIme(ime.getText().toString());
+        biografija.setPrezime(prezime.getText().toString());
+        biografija.setJmbg(brojPasosa.getText().toString());
+        biografija.setDatumRodjenja(datumRodjenja.getText().toString());
+        if (musko.isChecked()) {
+            biografija.setMusko();
+        }
+        if (zensko.isChecked()) {
+            biografija.setZensko();
+        }
+        biografija.setVisina(Integer.parseInt(visina.getText().toString()));
+        biografija.setTezina(Integer.parseInt(tezina.getText().toString()));
+        biografija.setBrojCipela(Integer.parseInt(brojCipela.getText().toString()));
+        biografija.setVelicinaOdece(velicinaOdece.getSelectedItemPosition());
+        biografija.setPusac(pusac.isChecked());
+        biografija.setuBraku(uBraku.isChecked());
+        biografija.setImaDece(imaDece.isChecked());
+        biografija.setDrzava(((Drzava) drzava.getSelectedItem()).getId());
+        biografija.setMesto(((Mesto) mesto.getSelectedItem()).getId());
+        biografija.setAdresa(adresa.getText().toString());
+        biografija.setFiksniTelefon(fiksniTelefon.getText().toString());
+        biografija.setMobilniTelefon(mobilniTelefon.getText().toString());
+        biografija.setEmail(email.getText().toString());
+        biografija.setStepenStrucneSpremen(((StepenStrucneSpreme) strucnaSprema.getSelectedItem()).getId());
+        biografija.setDelatnost(((Delatnost) delatnost.getSelectedItem()).getId());
+        biografija.setZanimanje(((Zanimanje) zanimanje.getSelectedItem()).getId());
+        biografija.setRadNaRacunaru(radNaRacunaru.getSelectedItemPosition());
+        biografija.setOstalaZnanja(ostalaZnanja.getText().toString());
+        biografija.setA(a.isChecked());
+        biografija.setB(b.isChecked());
+        biografija.setC(c.isChecked());
+        biografija.setD(d.isChecked());
+        biografija.setE(e.isChecked());
+        biografija.setF(f.isChecked());
+        biografija.setM(m.isChecked());
+        biografija.setOsudjivan(osudjivan.getText().toString());
+        biografija.setZdravstveniProblemi(zdravstveniProblemi.getText().toString());
+        biografija.setOstaleNapomene(ostaleNapomene.getText().toString());
+        if (nezaposlen.isChecked()) {
+            biografija.setNezaposlen();
+        }
+        if (zaposlen.isChecked()) {
+            biografija.setZaposlen();
+        }
+        if (student.isChecked()) {
+            biografija.setStudent();
+        }
+
+        new SacuvajBiografijuTask().execute(biografija);
+    }
 
     @Override
     public void refresh() {
         if (id != 0) {
             new UcitajBiografijuTask().execute(id);
         }
-        if (progressBar != null) {
-            progressBar.setVisibility(View.GONE);
-        }
     }
 
     private void setDrzave(List<Drzava> drzave) {
-        this.drzave = drzave;
-        if (getActivity() != null) {
-            ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner, drzave);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            drzava.setAdapter(adapter);
-            postaviDrzavu();
-
-            List<String> naziviDrzava = new ArrayList<>();
-            for (Drzava d : drzave) {
-                naziviDrzava.add(d.getNaziv());
+        if (drzaveAdapter != null) {
+            drzaveAdapter.clear();
+            drzaveAdapter.addAll(drzave);
+            naziviDrzava = new String[drzave.size()];
+            for (int i = 0; i < naziviDrzava.length; i++) {
+                naziviDrzava[i] = drzave.get(i).getNaziv();
             }
-            zeljenaMestaRada.setItems(naziviDrzava);
+            postaviDrzavu();
         }
     }
 
     private void setStrucneSpreme(List<StepenStrucneSpreme> strucneSpreme) {
-        stepenStrucneSpremeList = strucneSpreme;
-        if (getActivity() != null) {
-            ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner, stepenStrucneSpremeList);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            strucnaSprema.setAdapter(adapter);
-            postaviStrucnuSpremu();
-        }
+        stepenStrucneSpremeAdapter.clear();
+        stepenStrucneSpremeAdapter.addAll(strucneSpreme);
+        postaviStrucnuSpremu();
     }
 
     private void setDelatnosti(List<Delatnost> delatnosti) {
-        delatnostiList = delatnosti;
-        if (getActivity() != null) {
-            ArrayAdapter adapter = new ArrayAdapter<>(getActivity(), R.layout.simple_spinner, delatnosti);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            delatnost.setAdapter(adapter);
-            postaviDelatnost();
-        }
+        delatnostiAdapter.clear();
+        delatnostiAdapter.addAll(delatnosti);
+        postaviDelatnost();
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (parent == drzava) {
-            Drzava izabranaDrzava = drzave.get(position);
-            mesta = izabranaDrzava.getMesta();
+        if (parent == drzava && drzaveAdapter.getCount() > 0) {
+            Drzava izabranaDrzava = drzaveAdapter.getItem(position);
+            List<Mesto> mesta = izabranaDrzava.getMesta();
             biografija.setDrzava(izabranaDrzava.getId());
-            ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner,
-                    mesta);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            mesto.setAdapter(adapter);
+            mestaAdapter.clear();
+            mestaAdapter.addAll(mesta);
             postaviMesto();
-        } else if (parent == mesto) {
-            Mesto izabranoMesto = mesta.get(position);
+        } else if (parent == mesto && mestaAdapter.getCount() > 0) {
+            Mesto izabranoMesto = mestaAdapter.getItem(position);
             biografija.setMesto(izabranoMesto.getId());
         } else if (parent == velicinaOdece) {
             biografija.setVelicinaOdece(position);
-        } else if (parent == delatnost) {
-            zanimanjaList = delatnostiList.get(position).getZanimanja();
-            ArrayAdapter adapter = new ArrayAdapter<>(getActivity(),
-                    R.layout.simple_spinner, zanimanjaList);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            zanimanje.setAdapter(adapter);
+        } else if (parent == delatnost && delatnostiAdapter.getCount() > 0) {
+            List<Zanimanje> zanimanja = delatnostiAdapter.getItem(position).getZanimanja();
+            zanimanjaAdapter.clear();
+            zanimanjaAdapter.addAll(zanimanja);
             postaviZanimanje();
         }
     }
@@ -252,9 +564,9 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             } else {
                 figura.setImageDrawable(getResources().getDrawable(R.drawable.siluete));
             }
-           /* visina.setText(biografija.getVisina());
-            tezina.setText(biografija.getTezina());
-            brojCipela.setText(biografija.getBrojCipela());*/
+            this.visina.setText(Integer.toString(biografija.getVisina()));
+            this.tezina.setText(Integer.toString(biografija.getTezina()));
+            this.brojCipela.setText(Integer.toString(biografija.getBrojCipela()));
             velicinaOdece.setSelection(biografija.getVelicinaOdece());
             adresa.setText(biografija.getAdresa());
             fiksniTelefon.setText(biografija.getFiksniTelefon());
@@ -264,22 +576,51 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             uBraku.setChecked(biografija.isuBraku());
             imaDece.setChecked(biografija.isImaDece());
             radNaRacunaru.setSelection(biografija.getRadNaRacunaru());
+            ostalaZnanja.setText(biografija.getOstalaZnanja());
             postaviDrzavu();
             postaviMesto();
             postaviStrucnuSpremu();
             postaviDelatnost();
             postaviZanimanje();
-
+            zeljenaMestaRadaAdapter.clear();
+            for (Drzava drzava : biografija.getZeljeneDrzaveRada()) {
+                zeljenaMestaRadaAdapter.add(drzava);
+            }
+            zeljenaMestaRadaAdapter.notifyDataSetChanged();
+            Utils.setListViewHeightBasedOnChildren(zeljenaMestaRada);
+            radnoIskustvoAdapter.clear();
+            radnoIskustvoAdapter.addAll(biografija.getRadnoIskustvo());
+            Utils.setListViewHeightBasedOnChildren(radnoIskustvo);
+            prihvatljivaZanimanjaAdapter.clear();
+            prihvatljivaZanimanjaAdapter.addAll(biografija.getPrihvatljivaZanimanja());
+            Utils.setListViewHeightBasedOnChildren(prihvatljivaZanimanja);
+            pasosiAdapter.clear();
+            pasosiAdapter.addAll(biografija.getPasosi());
+            Utils.setListViewHeightBasedOnChildren(pasosi);
+            jeziciAdapter.clear();
+            jeziciAdapter.addAll(biografija.getJezici());
+            Utils.setListViewHeightBasedOnChildren(jezici);
+            a.setChecked(biografija.isA());
+            b.setChecked(biografija.isB());
+            c.setChecked(biografija.isC());
+            d.setChecked(biografija.isD());
+            e.setChecked(biografija.isE());
+            f.setChecked(biografija.isF());
+            m.setChecked(biografija.isM());
+            osudjivan.setText(biografija.getOsudjivan());
+            zdravstveniProblemi.setText(biografija.getZdravstveniProblemi());
+            ostaleNapomene.setText(biografija.getOstaleNapomene());
+            nezaposlen.setChecked(biografija.isNezaposlen());
+            zaposlen.setChecked(biografija.isZaposlen());
+            student.setChecked(biografija.isStudent());
         }
 
     }
 
     private void postaviDrzavu() {
-        if (this.biografija != null && drzave != null) {
-            Biografija biografija = this.biografija;
-            for (int i = 0; i < drzave.size(); i++) {
-                Drzava d = drzave.get(i);
-                if (d.getId() == biografija.getDrzava()) {
+        if (this.biografija != null && drzaveAdapter != null) {
+            for (int i = 0; i < drzaveAdapter.getCount(); i++) {
+                if (drzaveAdapter.getItem(i).getId() == this.biografija.getDrzava()) {
                     drzava.setSelection(i);
                     break;
                 }
@@ -288,11 +629,9 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     }
 
     private void postaviMesto() {
-        if (this.biografija != null && mesta != null) {
-            Biografija biografija = this.biografija;
-            for (int i = 0; i < mesta.size(); i++) {
-                Mesto mesto = mesta.get(i);
-                if (mesto.getId() == biografija.getMesto()) {
+        if (this.biografija != null && mestaAdapter != null) {
+            for (int i = 0; i < mestaAdapter.getCount(); i++) {
+                if (mestaAdapter.getItem(i).getId() == this.biografija.getMesto()) {
                     this.mesto.setSelection(i);
                     break;
                 }
@@ -301,10 +640,10 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     }
 
     private void postaviStrucnuSpremu() {
-        if (this.biografija != null && stepenStrucneSpremeList != null) {
+        if (this.biografija != null && stepenStrucneSpremeAdapter != null) {
             Biografija biografija = this.biografija;
-            for (int i = 0; i < stepenStrucneSpremeList.size(); i++) {
-                if (stepenStrucneSpremeList.get(i).getId() == biografija.getStepenStrucneSpremen()) {
+            for (int i = 0; i < stepenStrucneSpremeAdapter.getCount(); i++) {
+                if (stepenStrucneSpremeAdapter.getItem(i).getId() == biografija.getStepenStrucneSpremen()) {
                     strucnaSprema.setSelection(i);
                     break;
                 }
@@ -313,22 +652,21 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     }
 
     private void postaviDelatnost() {
-        if (this.biografija != null && delatnostiList != null) {
+        if (this.biografija != null && delatnostiAdapter != null) {
             Biografija biografija = this.biografija;
-            for (int i = 0; i < delatnostiList.size(); i++) {
-                if (delatnostiList.get(i).getId() == biografija.getDelatnost()) {
+            for (int i = 0; i < delatnostiAdapter.getCount(); i++) {
+                if (biografija.getDelatnost() == delatnostiAdapter.getItem(i).getId()) {
                     delatnost.setSelection(i);
-                    break;
                 }
             }
         }
     }
 
     private void postaviZanimanje() {
-        if (this.biografija != null && zanimanjaList != null) {
+        if (this.biografija != null && zanimanjaAdapter != null) {
             Biografija biografija = this.biografija;
-            for (int i = 0; i < zanimanjaList.size(); i++) {
-                if (zanimanjaList.get(i).getId() == biografija.getZanimanje()) {
+            for (int i = 0; i < zanimanjaAdapter.getCount(); i++) {
+                if (zanimanjaAdapter.getItem(i).getId() == biografija.getZanimanje()) {
                     zanimanje.setSelection(i);
                     break;
                 }
@@ -369,7 +707,63 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
                         }
                     }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
             dialog.show();
+        } else if (v == btnDodajMestoRada && this.naziviDrzava != null) {
+            boolean[] checked = new boolean[naziviDrzava.length];
+            for (int i = 0; i < drzaveAdapter.getCount(); i++) {
+                checked[i] = biografija.sadrziZeljenuDrzavu(drzaveAdapter.getItem(i));
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            builder.setMultiChoiceItems(naziviDrzava, checked, new DialogInterface.OnMultiChoiceClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                    Drzava drzava = drzaveAdapter.getItem(which);
+                    if (isChecked) {
+                        biografija.getZeljeneDrzaveRada().add(drzava);
+                        zeljenaMestaRadaAdapter.add(drzava);
+                    } else {
+                        biografija.getZeljeneDrzaveRada().remove(drzava);
+                        zeljenaMestaRadaAdapter.remove(drzava);
+                    }
+                    zeljenaMestaRadaAdapter.notifyDataSetChanged();
+                    Utils.setListViewHeightBasedOnChildren(zeljenaMestaRada);
+                }
+            });
+            builder.setTitle("Željene države");
+            builder.show();
+        } else if (v == btnObrisiMestoRada) {
+            int count = zeljenaMestaRada.getCount();
+            SparseBooleanArray viewItems = zeljenaMestaRada.getCheckedItemPositions();
+            for (int i = 0; i < count; i++) {
+                if (viewItems.get(i)) {
+                    TextView item = (TextView)zeljenaMestaRada.getChildAt(i);
+                    for (int j = 0; j < drzaveAdapter.getCount(); j++) {
+                        Drzava drzava = drzaveAdapter.getItem(j);
+                        if (drzava.getNaziv().equals(item.getText())) {
+                            zeljenaMestaRadaAdapter.remove(drzava);
+                            biografija.getZeljeneDrzaveRada().remove(drzava);
+                        }
+                    }
+                }
+            }
+            viewItems.clear();
+            zeljenaMestaRadaAdapter.notifyDataSetChanged();
+            Utils.setListViewHeightBasedOnChildren(zeljenaMestaRada);
+        } else if (v == btnDodajRadnoIskustvo) {
+            RadnoIskustvoFragment dialog = RadnoIskustvoFragment.newInstance(0, null, null, null);
+            dialog.setEdit(new RadnoIskustvo(), false);
+            dialog.show(getFragmentManager(), null);
+        } else if (v == btnObrisiRadnoIskustvo) {
+            List<RadnoIskustvo> selections = radnoIskustvoAdapter.getSelections();
+            for (int i = 0; i < selections.size(); i++) {
+                RadnoIskustvo ri = selections.get(i);
+                radnoIskustvoAdapter.remove(ri);
+                selections.remove(ri);
+            }
+            radnoIskustvoAdapter.notifyDataSetChanged();
+            Utils.setListViewHeightBasedOnChildren(radnoIskustvo);
         }
+
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -392,25 +786,61 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         datumRodjenja.setText(noviDatumRodjenja);
     }
 
-    private class UcitajDrzaveTask extends AsyncTask<Void, Void, List<Drzava>> {
+    public void azurirajRadnoIskustvo(RadnoIskustvo radnoIskustvo) {
+        radnoIskustvoAdapter.notifyDataSetChanged();
+    }
 
+    public void dodajRadnoIskustvo(RadnoIskustvo edit) {
+        radnoIskustvoAdapter.add(edit);
+        Utils.setListViewHeightBasedOnChildren(this.radnoIskustvo);
+        radnoIskustvoAdapter.notifyDataSetChanged();
+    }
+
+    public void dodajPrihvatljivoZanimanje(Zanimanje zanimanje) {
+        prihvatljivaZanimanjaAdapter.add(zanimanje);
+        Utils.setListViewHeightBasedOnChildren(prihvatljivaZanimanja);
+    }
+
+    private class UcitajSifranikeTask extends AsyncTask<Void, Void, Sifarnici> {
         @Override
-        protected List<Drzava> doInBackground(Void... params) {
+        protected Sifarnici doInBackground(Void... params) {
+            Sifarnici sifarnici = new Sifarnici();
             try {
-                return HttpService.getInstance().vratiDrzave();
+                sifarnici.setDrzave(HttpService.getInstance().vratiDrzave());
+                sifarnici.setDelatnosti(HttpService.getInstance().vratiDelatnosti());
+                sifarnici.setStrucneSpreme(HttpService.getInstance().vratiStrucneSpreme());
+                sifarnici.setJezici(HttpService.getInstance().vratiJezike());
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            return new ArrayList<>();
+            return sifarnici;
         }
 
         @Override
-        protected void onPostExecute(List<Drzava> drzave) {
-            BiografijaFragment.this.setDrzave(drzave);
+        protected void onPreExecute() {
+            if (BiografijaFragment.this.progressBar != null) {
+                BiografijaFragment.this.progressBar.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Sifarnici sifarnici) {
+            BiografijaFragment.this.setDrzave(sifarnici.getDrzave());
+            BiografijaFragment.this.setStrucneSpreme(sifarnici.getStrucneSpreme());
+            BiografijaFragment.this.setDelatnosti(sifarnici.getDelatnosti());
+            BiografijaFragment.this.setJezici(sifarnici.getJezici());
+            if (BiografijaFragment.this.progressBar != null) {
+                BiografijaFragment.this.progressBar.setVisibility(View.GONE);
+            }
         }
     }
+
+    private void setJezici(List<Jezik> jezici) {
+        sviJezici = jezici;
+    }
+
     private class UcitajBiografijuTask extends AsyncTask<Integer, Void, Biografija> {
 
         @Override
@@ -438,43 +868,80 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             BiografijaFragment.this.progressBar.setVisibility(View.GONE);
         }
     }
-    private class UcitajStrunceSpremeTask extends AsyncTask<Void, Void, List<StepenStrucneSpreme>> {
+
+    private class SacuvajBiografijuTask extends AsyncTask<Biografija, Void, Biografija> {
 
         @Override
-        protected List<StepenStrucneSpreme> doInBackground(Void... params) {
-            try {
-                return HttpService.getInstance().vratiStrucneSpreme();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return new ArrayList<>();
+        protected void onPreExecute() {
+            BiografijaFragment.this.progressBar.setVisibility(View.VISIBLE);
         }
+
+        private Exception exc;
         @Override
-        protected void onPostExecute(List<StepenStrucneSpreme> stepenStrucneSpreme) {
-            BiografijaFragment.this.setStrucneSpreme(stepenStrucneSpreme);
+        protected Biografija doInBackground(Biografija... params) {
+            try {
+                HttpService httpService = HttpService.getInstance();
+                int id = httpService.sacuvajBiografiju(params[0]);
+                return httpService.vratiBiografiju(id);
+            } catch (Exception e1) {
+                exc = e1;
+            }
+            return null;
         }
+
+        @Override
+        protected void onPostExecute(Biografija biografija) {
+            if (exc != null) {
+                BiografijaFragment.this.showError(exc);
+            } else {
+                BiografijaFragment.this.setBiografija(biografija);
+            }
+            BiografijaFragment.this.progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    private void showError(Exception exc) {
 
     }
-    private class UcitajDelatnostiTask extends AsyncTask<Void, Void, List<Delatnost>> {
 
-        @Override
-        protected List<Delatnost> doInBackground(Void... params) {
-            try {
-                return HttpService.getInstance().vratiDelatnosti();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return new ArrayList<>();
-        }
-        @Override
-        protected void onPostExecute(List<Delatnost> delatnosti) {
-            BiografijaFragment.this.setDelatnosti(delatnosti);
+
+    private class Sifarnici {
+        public List<Drzava> drzave;
+        public List<StepenStrucneSpreme> strucneSpreme;
+        public List<Delatnost> delatnosti;
+        public List<Jezik> jezici;
+
+        public List<Drzava> getDrzave() {
+            return drzave;
         }
 
+        public void setDrzave(List<Drzava> drzave) {
+            this.drzave = drzave;
+        }
+
+        public List<StepenStrucneSpreme> getStrucneSpreme() {
+            return strucneSpreme;
+        }
+
+        public void setStrucneSpreme(List<StepenStrucneSpreme> strucneSpreme) {
+            this.strucneSpreme = strucneSpreme;
+        }
+
+        public List<Delatnost> getDelatnosti() {
+            return delatnosti;
+        }
+
+        public void setDelatnosti(List<Delatnost> delatnosti) {
+            this.delatnosti = delatnosti;
+        }
+
+        public List<Jezik> getJezici() {
+            return jezici;
+        }
+
+        public void setJezici(List<Jezik> jezici) {
+            this.jezici = jezici;
+        }
     }
 
 }

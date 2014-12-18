@@ -1,21 +1,31 @@
 package com.bitseverywhere.agavajobs.services;
 
+import android.util.Log;
+
 import com.bitseverywhere.agavajobs.models.domain.Biografija;
 import com.bitseverywhere.agavajobs.models.domain.Delatnost;
 import com.bitseverywhere.agavajobs.models.domain.DetaljiPosla;
 import com.bitseverywhere.agavajobs.models.domain.Drzava;
+import com.bitseverywhere.agavajobs.models.domain.Jezik;
 import com.bitseverywhere.agavajobs.models.domain.Korisnik;
 import com.bitseverywhere.agavajobs.models.domain.Mesto;
 import com.bitseverywhere.agavajobs.models.domain.Posao;
+import com.bitseverywhere.agavajobs.models.domain.RadnoIskustvo;
 import com.bitseverywhere.agavajobs.models.domain.StepenStrucneSpreme;
 import com.bitseverywhere.agavajobs.models.domain.Zanimanje;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +44,9 @@ public class HttpService {
 
     private static final String BASE_URL = "http://agava.rs/";
 
-    private static final String API_URL = "http://mobile.agava.rs/api/";
+    //private static final String API_URL = "http://mobile.agava.rs/api/";
+
+    private static final String API_URL = "http://192.168.1.2/Agava.Mobile.Api/api/";
 
     private static HttpService instance = new HttpService();
 
@@ -143,24 +155,158 @@ public class HttpService {
             biografija.setZanimanje(json.getInt("Zanimanje"));
         }
         biografija.setOstalaZnanja(json.getString("OstalaZnanja"));
+        JSONArray zmrJson = json.getJSONArray("ZeljenaMestaRada");
+        for (int i = 0; i < zmrJson.length(); i++) {
+            JSONObject d = zmrJson.getJSONObject(i);
+            biografija.getZeljeneDrzaveRada().add(new Drzava(d.getInt("Id"),
+                    d.getString("Naziv")));
+        }
+        JSONArray radnoIskustvo = json.getJSONArray("RadnoIskustvo");
+        for (int i = 0; i < radnoIskustvo.length(); i++) {
+            JSONObject ri = radnoIskustvo.getJSONObject(i);
+            biografija.getRadnoIskustvo().add(new RadnoIskustvo(ri.getInt("Id"),
+                    ri.getString("Poslodavac"),
+                    ri.getString("Period"),
+                    ri.getString("OpisPosla")));
+        }
+        JSONArray prihvatljivaZanimanja = json.getJSONArray("PrihvatljivaZanimanja");
+        for (int i = 0; i < prihvatljivaZanimanja.length(); i++) {
+            JSONObject z = prihvatljivaZanimanja.getJSONObject(i);
+            biografija.getPrihvatljivaZanimanja().add(new Zanimanje(z.getInt("Id"), z.getString("Naziv")));
+        }
+        JSONArray pasosi = json.getJSONArray("Pasosi");
+        for (int i = 0; i < pasosi.length(); i++) {
+            JSONObject pasos = pasosi.getJSONObject(i);
+            biografija.getPasosi().add(new Drzava(pasos.getInt("Id"), pasos.getString("Naziv")));
+        }
+        JSONArray jezici = json.getJSONArray("Jezici");
+        for (int i = 0; i < jezici.length(); i++) {
+            JSONObject jezik = jezici.getJSONObject(i);
+            biografija.getJezici().add(new Jezik(jezik.getInt("Id"), jezik.getString("Naziv")));
+        }
+        biografija.setA(json.getBoolean("A"));
+        biografija.setB(json.getBoolean("B"));
+        biografija.setC(json.getBoolean("C"));
+        biografija.setD(json.getBoolean("D"));
+        biografija.setE(json.getBoolean("E"));
+        biografija.setF(json.getBoolean("F"));
+        biografija.setM(json.getBoolean("M"));
+        biografija.setOsudjivan(json.getString("Osudjivan"));
+        biografija.setZdravstveniProblemi(json.getString("ZdravstveniProblemi"));
+        biografija.setOstaleNapomene(json.getString("OstaleNapomene"));
+        biografija.setStatus(json.getInt("Status"));
         return biografija;
     }
 
-    private List<Posao> vratiPoslove(String url) throws IOException, JSONException {
-        String response = httpGet(url);
-        JSONArray result = new JSONArray(response);
-        return vratiPoslove(result);
-    }
+    public int sacuvajBiografiju(Biografija biografija) throws Exception {
+        HttpClient client = new DefaultHttpClient();
+        HttpPost request = new HttpPost(API_URL + "korisnici/SacuvajBiografiju");
+        JSONObject json = new JSONObject();
+        json.put("Id", biografija.getId());
+        json.put("ProfilSlika", biografija.getProfil());
+        json.put("FiguraSlika", biografija.getFigura());
+        json.put("Ime", biografija.getIme());
+        json.put("Prezime", biografija.getPrezime());
+        json.put("Jmbg", biografija.getJmbg());
+        json.put("DatumRodjenja", biografija.getDatumRodjenja());
+        json.put("Pol", biografija.getPol());
+        json.put("Visina", biografija.getVisina());
+        json.put("Tezina", biografija.getTezina());
+        json.put("VelicinaOdece", biografija.getVelicinaOdece());
+        json.put("BrojCipela", biografija.getBrojCipela());
+        json.put("Pusac", biografija.isPusac());
+        json.put("UBraku", biografija.isuBraku());
+        json.put("ImaDece", biografija.isImaDece());
+        json.put("Drzava", biografija.getDrzava());
+        json.put("Mesto", biografija.getMesto());
+        json.put("Adresa", biografija.getAdresa());
+        json.put("FiksniTelefon", biografija.getFiksniTelefon());
+        json.put("MobilniTelefon", biografija.getMobilniTelefon());
+        json.put("Email", biografija.getEmail());
+        json.put("StrucnaSprema", biografija.getStepenStrucneSpremen());
+        json.put("VrstaZanimanja", biografija.getDelatnost());
+        json.put("Zanimanje", biografija.getZanimanje());
+        json.put("RadNaRacunaru", biografija.getRadNaRacunaru());
+        json.put("OstalaZnanja", biografija.getOstalaZnanja());
 
-    public List<StepenStrucneSpreme> vratiStrucneSpreme() throws IOException, JSONException {
-        String response = httpGet(API_URL + "sifarnici/VratiStrucneSpreme");
-        JSONArray json = new JSONArray(response);
-        List<StepenStrucneSpreme> sss = new ArrayList<>();
-        for (int i = 0; i < json.length(); i++) {
-            JSONObject jsonObj = json.getJSONObject(i);
-            sss.add(new StepenStrucneSpreme(jsonObj.getInt("Id"), jsonObj.getString("Naziv")));
+        JSONArray radnoIskustvo = new JSONArray();
+        for (RadnoIskustvo ri : biografija.getRadnoIskustvo()) {
+            JSONObject item = new JSONObject();
+            item.put("Id", ri.getId());
+            item.put("Poslodavac", ri.getPoslodavac());
+            item.put("Period", ri.getPeriod());
+            item.put("OpisPosla", ri.getOpis());
+            radnoIskustvo.put(item);
         }
-        return sss;
+        json.put("RadnoIskustvo", radnoIskustvo);
+
+        JSONArray zeljenaMestaRada = new JSONArray();
+        for (Drzava drzava : biografija.getZeljeneDrzaveRada()) {
+            JSONObject item = new JSONObject();
+            item.put("Id", drzava.getId());
+            item.put("Naziv", drzava.getNaziv());
+            zeljenaMestaRada.put(item);
+        }
+        json.put("ZeljenaMestaRada", zeljenaMestaRada);
+
+        JSONArray prihvatljivPoslovi = new JSONArray();
+        for (Zanimanje zanimanje : biografija.getPrihvatljivaZanimanja()) {
+            JSONObject item = new JSONObject();
+            item.put("Id", zanimanje.getId());
+            item.put("Naziv", zanimanje.getNaziv());
+            prihvatljivPoslovi.put(item);
+        }
+        json.put("PrihvatljivaZanimanja", prihvatljivPoslovi);
+        JSONArray pasosi = new JSONArray();
+        for (Drzava drzava : biografija.getPasosi()) {
+            JSONObject item = new JSONObject();
+            item.put("Id", drzava.getId());
+            item.put("Naziv", drzava.getNaziv());
+            pasosi.put(item);
+        }
+        json.put("Pasosi", pasosi);
+
+        JSONArray jezici = new JSONArray();
+        for (Jezik jezik : biografija.getJezici()) {
+            JSONObject item = new JSONObject();
+            item.put("Id", jezik.getId());
+            item.put("Naziv", jezik.getNaziv());
+            jezici.put(item);
+        }
+        json.put("Jezici", jezici);
+
+        json.put("A", biografija.isA());
+        json.put("B", biografija.isB());
+        json.put("C", biografija.isC());
+        json.put("D", biografija.isD());
+        json.put("E", biografija.isE());
+        json.put("F", biografija.isF());
+        json.put("M", biografija.isM());
+        json.put("Osudjivan", biografija.getOsudjivan());
+        json.put("ZdravstveniProblemi", biografija.getZdravstveniProblemi());
+        json.put("OstaleNapomene", biografija.getOstaleNapomene());
+        json.put("Status", biografija.getStatus());
+
+        String jsonString = json.toString();
+        StringEntity entity = new StringEntity(jsonString, "utf-8");
+        request.setEntity(entity);
+        request.setHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8");
+        HttpResponse response = client.execute(request);
+        int status = response.getStatusLine().getStatusCode();
+        if (status == 201) {
+            HttpEntity result = response.getEntity();
+            InputStream content = result.getContent();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+            String line;
+            StringBuilder builder = new StringBuilder();
+            while((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+            line = builder.toString();
+            return Integer.parseInt(line);
+        }
+        throw new Exception("Resource is not created");
+
     }
 
     public List<Delatnost> vratiDelatnosti() throws IOException, JSONException {
@@ -180,6 +326,34 @@ public class HttpService {
         }
 
         return delatnosti;
+    }
+
+    public List<Jezik> vratiJezike() throws IOException, JSONException {
+        String response = httpGet(API_URL + "sifarnici/VratiJezike");
+        JSONArray json = new JSONArray(response);
+        List<Jezik> jezici = new ArrayList<>();
+        for (int i = 0; i < json.length(); i++) {
+            JSONObject jezik = json.getJSONObject(i);
+            jezici.add(new Jezik(jezik.getInt("Id"), jezik.getString("Naziv")));
+        }
+        return jezici;
+    }
+
+    public List<StepenStrucneSpreme> vratiStrucneSpreme() throws IOException, JSONException {
+        String response = httpGet(API_URL + "sifarnici/VratiStrucneSpreme");
+        JSONArray json = new JSONArray(response);
+        List<StepenStrucneSpreme> sss = new ArrayList<>();
+        for (int i = 0; i < json.length(); i++) {
+            JSONObject jsonObj = json.getJSONObject(i);
+            sss.add(new StepenStrucneSpreme(jsonObj.getInt("Id"), jsonObj.getString("Naziv")));
+        }
+        return sss;
+    }
+
+    private List<Posao> vratiPoslove(String url) throws IOException, JSONException {
+        String response = httpGet(url);
+        JSONArray result = new JSONArray(response);
+        return vratiPoslove(result);
     }
 
 

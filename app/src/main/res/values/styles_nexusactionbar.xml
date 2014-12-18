@@ -19,7 +19,7 @@
 
 <resources>
 
-    <style name="Theme.Nexusactionbar" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+    <style name="Theme.Nexusactionbar" parent="@style/YellowTheme">
         <item name="actionBarItemBackground">@drawable/selectable_background_nexusactionbar</item>
         <item name="popupMenuStyle">@style/PopupMenu.Nexusactionbar</item>
         <item name="dropDownListViewStyle">@style/DropDownListView.Nexusactionbar</item>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Default" parent="@style/YellowTheme">
+    <style name="Theme.Default" parent="@style/Theme.Nexusactionbar">
     </style>
 </resources>

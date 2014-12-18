@@ -1,5 +1,8 @@
 package com.bitseverywhere.agavajobs.models.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Željko on 14.12.2014..
  */
@@ -26,6 +29,14 @@ public class Biografija {
     private int radNaRacunaru;
     private int stepenStrucneSpremen, delatnost, zanimanje;
     private String ostalaZnanja;
+    private List<Drzava> zeljeneDrzaveRada = new ArrayList<>();
+    private List<RadnoIskustvo> radnoIskustvo = new ArrayList<>();
+    private List<Zanimanje> prihvatljivaZanimanja = new ArrayList<>();
+    private List<Drzava> pasosi = new ArrayList<>();
+    private List<Jezik> jezici = new ArrayList<>();
+    private boolean a, b, c, d, e, f, m;
+    private String osudjivan, zdravstveniProblemi, ostaleNapomene;
+    private int status;
 
     public int getId() {
         return id;
@@ -175,9 +186,13 @@ public class Biografija {
         return getPol() == 1;
     }
 
+    public void setMusko() {setPol(1);}
+
     public boolean isZensko() {
         return getPol() == 2;
     }
+
+    public void setZensko() {setPol(2);}
 
     public boolean isPusac() {
         return pusac;
@@ -241,5 +256,141 @@ public class Biografija {
 
     public void setOstalaZnanja(String ostalaZnanja) {
         this.ostalaZnanja = ostalaZnanja;
+    }
+
+    public List<Drzava> getZeljeneDrzaveRada() {
+        return zeljeneDrzaveRada;
+    }
+
+    public boolean sadrziZeljenuDrzavu(Drzava drzava) {
+        return getZeljeneDrzaveRada().contains(drzava);
+    }
+
+    public List<RadnoIskustvo> getRadnoIskustvo() {
+        return radnoIskustvo;
+    }
+
+    public List<Zanimanje> getPrihvatljivaZanimanja() {
+        return prihvatljivaZanimanja;
+    }
+
+    public List<Drzava> getPasosi() {
+        return pasosi;
+    }
+
+    public List<Jezik> getJezici() {
+        return jezici;
+    }
+
+    public boolean isA() {
+        return a;
+    }
+
+    public void setA(boolean a) {
+        this.a = a;
+    }
+
+    public boolean isB() {
+        return b;
+    }
+
+    public void setB(boolean b) {
+        this.b = b;
+    }
+
+    public boolean isC() {
+        return c;
+    }
+
+    public void setC(boolean c) {
+        this.c = c;
+    }
+
+    public boolean isD() {
+        return d;
+    }
+
+    public void setD(boolean d) {
+        this.d = d;
+    }
+
+    public boolean isE() {
+        return e;
+    }
+
+    public void setE(boolean e) {
+        this.e = e;
+    }
+
+    public boolean isF() {
+        return f;
+    }
+
+    public void setF(boolean f) {
+        this.f = f;
+    }
+
+    public boolean isM() {
+        return m;
+    }
+
+    public void setM(boolean m) {
+        this.m = m;
+    }
+
+    public String getOsudjivan() {
+        return osudjivan;
+    }
+
+    public void setOsudjivan(String osudjivan) {
+        this.osudjivan = osudjivan;
+    }
+
+    public String getZdravstveniProblemi() {
+        return zdravstveniProblemi;
+    }
+
+    public void setZdravstveniProblemi(String zdravstveniProblemi) {
+        this.zdravstveniProblemi = zdravstveniProblemi;
+    }
+
+    public String getOstaleNapomene() {
+        return ostaleNapomene;
+    }
+
+    public void setOstaleNapomene(String ostaleNapomene) {
+        this.ostaleNapomene = ostaleNapomene;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public boolean isNezaposlen() {
+        return status == 0;
+    }
+
+    public boolean isZaposlen() {
+        return status == 1;
+    }
+
+    public boolean isStudent() {
+        return status == 2;
+    }
+
+    public void setNezaposlen() {
+        setStatus(0);
+    }
+
+    public void setZaposlen() {
+        setStatus(1);
+    }
+
+    public void setStudent() {
+        setStatus(2);
     }
 }

@@ -21,17 +21,16 @@ public class PosloviAdapter extends ArrayAdapter<Posao> {
     private LayoutInflater layoutInflater;
     private List<Posao> source;
 
-    public PosloviAdapter(Context context, List<Posao> source) {
-        super(context, R.layout.row_posao, source);
+    public PosloviAdapter(Context context) {
+        super(context, R.layout.row_posao);
         this.context = context;
-        this.source = source;
         layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = layoutInflater.inflate(R.layout.row_posao, parent, false);
-        Posao posao = source.get(position);
+        Posao posao = getItem(position);
         TextView kompanija = (TextView)view.findViewById(R.id.kompanija);
         kompanija.setText(posao.getPoslodavac());
         TextView lokacija = (TextView)view.findViewById(R.id.lokacija);

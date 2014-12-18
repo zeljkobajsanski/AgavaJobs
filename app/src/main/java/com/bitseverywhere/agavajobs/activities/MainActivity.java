@@ -29,7 +29,8 @@ public class MainActivity extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
-
+    private BiografijaFragment mBiografijaFragment;
+    private PregledPoslovaFragment mPremijumPoslovi, mHotPoslovi, mStandardniPoslovi;
     private Menu menu;
 
     @Override
@@ -54,28 +55,41 @@ public class MainActivity extends ActionBarActivity
         Fragment fragment = null;
         switch (position) {
             case 0:
-                fragment = PregledPoslovaFragment.newInstance(PregledPoslovaFragment.PREMIJUM_POSLOVI);
+                if (mPremijumPoslovi == null) {
+                    mPremijumPoslovi = PregledPoslovaFragment.newInstance(PregledPoslovaFragment.PREMIJUM_POSLOVI);
+                }
+                fragment = mPremijumPoslovi;
                 break;
             case 1:
-                fragment = PregledPoslovaFragment.newInstance(PregledPoslovaFragment.HOT_POSLOVI);
+                if (mHotPoslovi == null) {
+                    mHotPoslovi = PregledPoslovaFragment.newInstance(PregledPoslovaFragment.HOT_POSLOVI);
+                }
+                fragment = mHotPoslovi;
                 break;
             case 2:
-                fragment = PregledPoslovaFragment.newInstance(PregledPoslovaFragment.STANDARDNI_POSLOVI);
+                if (mStandardniPoslovi == null) {
+                    mStandardniPoslovi = PregledPoslovaFragment.newInstance(PregledPoslovaFragment.STANDARDNI_POSLOVI);
+                }
+                fragment = mStandardniPoslovi;
                 break;
             case 4:
-                fragment = BiografijaFragment.newInstance(5);
+                if (mBiografijaFragment == null) {
+                    mBiografijaFragment = BiografijaFragment.newInstance(7);
+                }
+                fragment = mBiografijaFragment;
                 break;
         }
         mActiveFragment = (IFragment)fragment;
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
-                .addToBackStack("default")
+                .addToBackStack(null)
                 .commit();
 
     }
 
     public void onSectionAttached(int number) {
+        // TODO: Postavi naslov
         switch (number) {
             case 0:
                 mTitle = getString(R.string.title_premijum);
@@ -124,15 +138,6 @@ public class MainActivity extends ActionBarActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_refresh) {
-            if (mActiveFragment != null) {
-                mActiveFragment.refresh();
-            }
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 

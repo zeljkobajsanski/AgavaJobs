@@ -368,38 +368,291 @@
                 android:hint="Ostala znanja"
                 style="@style/EditTextYellowTheme"/>
             <!-- Radno iskustvo -->
-            <TextView
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal" android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/opacity_black"
+                android:layout_marginTop="4dip"
+                android:padding="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="RADNO ISKUSTVO"
+                    android:textColor="@color/yellow"
+                    />
+                <ImageButton
+                    android:id="@+id/btnObrisiIskustvo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_action_discard"/>
+                <ImageButton
+                    android:id="@+id/btnDodajIskustvo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/btnObrisiIskustvo"
+                    android:src="@drawable/ic_action_new"
+                    />
+
+            </RelativeLayout>
+            <ListView
+                android:id="@+id/radnoIskustvo"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="RADNO ISKUSTVO"
-                android:padding="8dp"
-                android:textColor="@color/yellow"
-                android:background="@color/opacity_black"/>
-            <!-- Prihvatljivi poslovi -->
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="PRIHVATLJIVI POSLOVI"
-                android:padding="8dp"
-                android:textColor="@color/yellow"
-                android:background="@color/opacity_black"/>
+                ></ListView>
             <!-- Željena mesta rada -->
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="ŽELJENA MESTA RADA"
-                android:padding="8dp"
-                android:textColor="@color/yellow"
-                android:background="@color/opacity_black"/>
-            <com.bitseverywhere.agavajobs.widgets.MultiSelectSpinner
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal" android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/opacity_black"
+                android:layout_marginTop="4dip"
+                android:padding="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ŽELJENA MESTA RADA"
+                    android:textColor="@color/yellow"
+                    />
+                <ImageButton
+                    android:id="@+id/btnObrisiMestaRada"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_action_discard"/>
+                <ImageButton
+                    android:id="@+id/btnDodajMestoRada"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/btnObrisiMestaRada"
+                    android:src="@drawable/ic_action_new"
+                    />
+
+            </RelativeLayout>
+            <ListView
                 android:id="@+id/zeljenaMestaRada"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:spinnerMode="dialog"
-                style="@style/SpinnerYellowTheme"
-                ></com.bitseverywhere.agavajobs.widgets.MultiSelectSpinner>
-        </LinearLayout>
+                ></ListView>
+            <!-- Prihvatljivi poslovi -->
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal" android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/opacity_black"
+                android:layout_marginTop="4dip"
+                android:padding="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PRIHVATLJIVI POSLOVI"
+                    android:textColor="@color/yellow"
+                    />
+                <ImageButton
+                    android:id="@+id/btnObrisiPrihvatljivaZanimanja"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_action_discard"/>
+                <ImageButton
+                    android:id="@+id/btnDodajPrihvatljivaZanimanja"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/btnObrisiPrihvatljivaZanimanja"
+                    android:src="@drawable/ic_action_new"
+                    />
+            </RelativeLayout>
+            <ListView
+                android:id="@+id/prihvatljivaZanimanja"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"></ListView>
 
+            <!-- Prihvatljivi poslovi -->
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal" android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/opacity_black"
+                android:layout_marginTop="4dip"
+                android:padding="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PASOŠI KOJE POSEDUJETE"
+                    android:textColor="@color/yellow"
+                    />
+                <ImageButton
+                    android:id="@+id/btnObrisiPasos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_action_discard"/>
+                <ImageButton
+                    android:id="@+id/btnDodajPasos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/btnObrisiPasos"
+                    android:src="@drawable/ic_action_new"
+                    />
+            </RelativeLayout>
+            <ListView
+                android:id="@+id/pasosi"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"></ListView>
+
+            <!-- Jezici -->
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal" android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/opacity_black"
+                android:layout_marginTop="4dip"
+                android:padding="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="POZNAVANJE JEZIKA"
+                    android:textColor="@color/yellow"
+                    />
+                <ImageButton
+                    android:id="@+id/btnObrisiJezik"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_action_discard"/>
+                <ImageButton
+                    android:id="@+id/btnDodajJezik"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/btnObrisiJezik"
+                    android:src="@drawable/ic_action_new"
+                    />
+            </RelativeLayout>
+            <ListView
+                android:id="@+id/jezici"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"></ListView>
+
+            <!-- Vozačka dozvola -->
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/opacity_black"
+                android:padding="8dp"
+                android:text="KATEGORIJE VOZAČKE DOZVOLE"
+                android:textColor="@color/yellow" />
+            <com.bitseverywhere.agavajobs.widgets.FlowLayout
+                android:id="@+id/flow1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                >
+                <CheckBox
+                    android:id="@+id/A"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="A"
+                    style="@style/CheckBoxYellowTheme"/>
+                <CheckBox
+                    android:id="@+id/B"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="B"
+                    style="@style/CheckBoxYellowTheme"/>
+                <CheckBox
+                    android:id="@+id/C"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="C"
+                    style="@style/CheckBoxYellowTheme"/>
+                <CheckBox
+                    android:id="@+id/D"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="D"
+                    style="@style/CheckBoxYellowTheme"/>
+                <CheckBox
+                    android:id="@+id/E"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="E"
+                    style="@style/CheckBoxYellowTheme"/>
+                <CheckBox
+                    android:id="@+id/F"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="F"
+                    style="@style/CheckBoxYellowTheme"/>
+                <CheckBox
+                    android:id="@+id/M"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="M"
+                    style="@style/CheckBoxYellowTheme"/>
+                </com.bitseverywhere.agavajobs.widgets.FlowLayout>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/opacity_black"
+                android:padding="8dp"
+                android:text="OSTALI PODACI"
+                android:textColor="@color/yellow" />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/osudjivan"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Da li ste osuđivani?"
+                    style="@style/EditTextYellowTheme"/>
+                <EditText
+                    android:id="@+id/zdravstveniProblemi"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Zdravstveni problemi?"
+                    style="@style/EditTextYellowTheme"/>
+                </LinearLayout>
+            <EditText
+                android:id="@+id/ostaleNapomene"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:lines="5"
+                android:gravity="top"
+                android:hint="Ostale napomene"
+                style="@style/EditTextYellowTheme"/>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/opacity_black"
+                android:padding="8dp"
+                android:text="RADNI STATUS"
+                android:textColor="@color/yellow" />
+            <RadioGroup
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <RadioButton
+                    android:id="@+id/nezaposlen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nezaposlen"
+                    style="@style/RadioButtonYellowTheme"
+                    />
+                <RadioButton
+                    android:id="@+id/zaposlen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Zaposlen"
+                    style="@style/RadioButtonYellowTheme"
+                    />
+                <RadioButton
+                    android:id="@+id/student"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Student"
+                    style="@style/RadioButtonYellowTheme"
+                    />
+            </RadioGroup>
+        </LinearLayout>
     </ScrollView>
 
     <ProgressBar
@@ -409,5 +662,5 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:indeterminate="true"
-        android:visibility="visible" />
+        android:visibility="gone" />
 </RelativeLayout>
