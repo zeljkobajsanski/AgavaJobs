@@ -1,6 +1,8 @@
 package com.bitseverywhere.agavajobs.fragments;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +16,7 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bitseverywhere.agavajobs.ImageUtils;
 import com.bitseverywhere.agavajobs.R;
@@ -33,22 +36,25 @@ import java.io.IOException;
 public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implements IFragment {
 
     private static final String ID_POSLA = "id";
+    private static final String ID_KORISNIKA = "idKorisnika";
 
     private int id;
+    private int idKorisnika;
 
     private ImageView logo;
     private ProgressBar progressBar;
     private WebView webView;
     private TextView nazivOglasa;
-    private TextView poslodavac;
+    private TextView poslodavac, nazivPoslodavca;
     private TextView sifraOglasa, zanimanje, lokacija, brojIzvrsilaca, obrazovanje,
                     rok1;
     private Gallery gallery;
 
-    public static DetaljiPoslaFragment newInstance(int id) {
+    public static DetaljiPoslaFragment newInstance(int id, int idKorisnika) {
         DetaljiPoslaFragment fragment = new DetaljiPoslaFragment();
         Bundle args = new Bundle();
         args.putInt(ID_POSLA, id);
+        args.putInt(ID_KORISNIKA, idKorisnika);
         fragment.setArguments(args);
         return fragment;
     }
@@ -62,6 +68,7 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             id = getArguments().getInt(ID_POSLA);
+            idKorisnika = getArguments().getInt(ID_KORISNIKA);
             refresh();
         }
         setHasOptionsMenu(true);
@@ -84,6 +91,7 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
         obrazovanje = (TextView)view.findViewById(R.id.obrazovanje);
         rok1 = (TextView)view.findViewById(R.id.rok1);
         gallery = (Gallery)view.findViewById(R.id.gallery);
+        nazivPoslodavca = (TextView)view.findViewById(R.id.nazivPoslodavca);
         return view;
     }
 
@@ -107,7 +115,18 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
     }
 
     private void konkurisi() {
-        // TODO: Impementirati konkurisanje
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Agava Jobs");
+        builder.setMessage("Da li želite da konkurišete za izabrani posao?");
+        builder.setPositiveButton("Da, želim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                new KonkurisiTask(DetaljiPoslaFragment.this.idKorisnika, DetaljiPoslaFragment.this.id).execute();
+            }
+        });
+        builder.setNegativeButton("Ne želim", null);
+        builder.show();
+
     }
 
     @Override
@@ -121,6 +140,7 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
                 logo.setImageBitmap(ImageUtils.getBitmapFromStringBase64(detaljiPosla.getLogo()));
             }
             nazivOglasa.setText(detaljiPosla.getNaziv());
+            nazivPoslodavca.setText(detaljiPosla.getPoslodavac());
             poslodavac.setText(detaljiPosla.getPoslodavac());
             webView.loadData(detaljiPosla.getOpis(), "text/html", "UTF-8");
             sifraOglasa.setText(detaljiPosla.getSifra() != "null" ? detaljiPosla.getSifra() : null);
@@ -132,6 +152,22 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
             if (getActivity() != null) {
                 gallery.setAdapter(new GalleryAdapter(getActivity(), detaljiPosla.getSlike()));
             }
+        }
+    }
+
+    private void uspesnoKonkurisano(String message) {
+        if (DetaljiPoslaFragment.this.progressBar != null) {
+            DetaljiPoslaFragment.this.progressBar.setVisibility(View.GONE);
+        }
+        if (message == null) {
+            Toast.makeText(getActivity(), "Uspešno ste konkurisali za izabrani posao",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Agava Jobs");
+            builder.setMessage(message);
+            builder.setPositiveButton("OK", null);
+            builder.show();
         }
     }
 
@@ -165,4 +201,40 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
             }
         }
     }
+
+    private class KonkurisiTask extends AsyncTask<Void, Void, String> {
+
+        private boolean ok = true;
+        private int idKorisnika, idPosla;
+
+        private KonkurisiTask(int idKorisnika, int idPosla) {
+            this.idKorisnika = idKorisnika;
+            this.idPosla = idPosla;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            if (DetaljiPoslaFragment.this.progressBar != null) {
+                DetaljiPoslaFragment.this.progressBar.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                return HttpService.getInstance().konkurisi(idKorisnika, idPosla);
+            } catch (Exception e) {
+                ok = false;
+                e.printStackTrace();
+            }
+            return "Greška prilikom konkurisanja";
+        }
+
+        @Override
+        protected void onPostExecute(String message) {
+            DetaljiPoslaFragment.this.uspesnoKonkurisano(message);
+        }
+    }
+
+
 }

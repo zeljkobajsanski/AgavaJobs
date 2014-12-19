@@ -11,6 +11,7 @@ import com.bitseverywhere.agavajobs.models.domain.Korisnik;
 import com.bitseverywhere.agavajobs.models.domain.Mesto;
 import com.bitseverywhere.agavajobs.models.domain.Posao;
 import com.bitseverywhere.agavajobs.models.domain.RadnoIskustvo;
+import com.bitseverywhere.agavajobs.models.domain.Stats;
 import com.bitseverywhere.agavajobs.models.domain.StepenStrucneSpreme;
 import com.bitseverywhere.agavajobs.models.domain.Zanimanje;
 
@@ -21,6 +22,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
@@ -34,6 +36,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,9 +47,11 @@ public class HttpService {
 
     private static final String BASE_URL = "http://agava.rs/";
 
+    private static final String API_URL = "http://agava.brizb.rs/api/";
+
     //private static final String API_URL = "http://mobile.agava.rs/api/";
 
-    private static final String API_URL = "http://192.168.1.2/Agava.Mobile.Api/api/";
+    //private static final String API_URL = "http://192.168.1.2/Agava.Mobile.Api/api/";
 
     private static HttpService instance = new HttpService();
 
@@ -129,8 +134,8 @@ public class HttpService {
         biografija.setJmbg(json.getString("Jmbg"));
         biografija.setDatumRodjenja(json.getString("DatumRodjenja"));
         biografija.setPol(json.getInt("Pol"));
-        biografija.setDrzava(json.getInt("Drzava"));
-        biografija.setMesto(json.getInt("Mesto"));
+        biografija.setDrzava(json.optInt("Drzava"));
+        biografija.setMesto(json.optInt("Mesto"));
         biografija.setVisina(json.getInt("Visina"));
         biografija.setTezina(json.getInt("Tezina"));
         biografija.setVelicinaOdece(json.getInt("VelicinaOdece"));
@@ -348,6 +353,87 @@ public class HttpService {
             sss.add(new StepenStrucneSpreme(jsonObj.getInt("Id"), jsonObj.getString("Naziv")));
         }
         return sss;
+    }
+
+    public Stats vratiStatistiku() throws IOException, JSONException {
+        String response = httpGet(API_URL + "poslovi/stats");
+        JSONObject json = new JSONObject(response);
+        return new Stats(json.getInt("UkupanBrojPremijumPoslova"), json.getInt("UkupanBrojHotPoslova"),
+                json.getInt("UkupanBrojStandardnihPoslova"));
+    }
+
+    public int login(String email, String password) throws Exception {
+        HttpClient client = new DefaultHttpClient();
+        HttpPut request = new HttpPut(API_URL + "korisnici/login");
+        JSONObject auth = new JSONObject();
+        auth.put("KorisnickoIme", email);
+        auth.put("Lozinka", password);
+        StringEntity entity = new StringEntity(auth.toString(), "utf-8");
+        request.setEntity(entity);
+        request.setHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8");
+
+        HttpResponse response = client.execute(request);
+        int status = response.getStatusLine().getStatusCode();
+        if (status == 200) {
+            HttpEntity result = response.getEntity();
+            InputStream content = result.getContent();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+            String line;
+            StringBuilder builder = new StringBuilder();
+            while((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+            line = builder.toString();
+            auth = new JSONObject(line);
+            return auth.getInt("Id");
+        }
+        throw new Exception("User not logged in");
+    }
+
+    public int registrujNalog(String ime, String prezime, String email, String lozinka) throws Exception {
+        HttpClient client = new DefaultHttpClient();
+        HttpPost request = new HttpPost(API_URL + "korisnici/RegistrujNalog");
+        JSONObject auth = new JSONObject();
+        auth.put("Ime", ime);
+        auth.put("Prezime", prezime);
+        auth.put("EMail", email);
+        auth.put("Lozinka", lozinka);
+        StringEntity entity = new StringEntity(auth.toString(), "utf-8");
+        request.setEntity(entity);
+        request.setHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8");
+
+        HttpResponse response = client.execute(request);
+        int status = response.getStatusLine().getStatusCode();
+        if (status == 201) {
+            HttpEntity result = response.getEntity();
+            InputStream content = result.getContent();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+            String line;
+            StringBuilder builder = new StringBuilder();
+            while((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+            line = builder.toString();
+            auth = new JSONObject(line);
+            return auth.getInt("Id");
+        }
+        throw new Exception("User not registered");
+    }
+
+    public String konkurisi(int idKorisnika, int idPosla) throws Exception {
+        HttpClient client = new DefaultHttpClient();
+        HttpPost request = new HttpPost(API_URL + "poslovi/Konkurisi");
+        JSONObject json = new JSONObject();
+        json.put("IdKorisnika", idKorisnika);
+        json.put("IdPosla", idPosla);
+        StringEntity entity = new StringEntity(json.toString(), "utf-8");
+        request.setEntity(entity);
+        request.setHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8");
+
+        HttpResponse response = client.execute(request);
+        StatusLine status = response.getStatusLine();
+        if (status.getStatusCode() == 201) return null;
+        return status.getReasonPhrase();
     }
 
     private List<Posao> vratiPoslove(String url) throws IOException, JSONException {

@@ -13,6 +13,7 @@
     <string name="action_accept">Sačuvaj</string>
     <string name="action_settings">Settings</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string-array name="velicine_odece">
         <item>XS</item>
         <item>S</item>
@@ -22,5 +23,8 @@
         <item>XXL</item>
         <item>XXXL</item>
     </string-array>
-    <string name="API_URL">http://agava.brizb.rs/api/</string>
+
+    <string name="title_activity_register">Kreiranje Agava naloga</string>
+    <string name="title_activity_main">Agava Jobs</string>
+
 </resources>

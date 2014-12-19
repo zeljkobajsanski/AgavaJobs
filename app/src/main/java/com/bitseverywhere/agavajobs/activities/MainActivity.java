@@ -1,5 +1,6 @@
 package com.bitseverywhere.agavajobs.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import com.bitseverywhere.agavajobs.R;
 import com.bitseverywhere.agavajobs.fragments.BiografijaFragment;
 import com.bitseverywhere.agavajobs.fragments.DetaljiPoslaFragment;
+import com.bitseverywhere.agavajobs.fragments.HomeFragment;
 import com.bitseverywhere.agavajobs.fragments.IFragment;
 import com.bitseverywhere.agavajobs.fragments.NavigationDrawerFragment;
 import com.bitseverywhere.agavajobs.fragments.PregledPoslovaFragment;
@@ -32,12 +34,14 @@ public class MainActivity extends ActionBarActivity
     private BiografijaFragment mBiografijaFragment;
     private PregledPoslovaFragment mPremijumPoslovi, mHotPoslovi, mStandardniPoslovi;
     private Menu menu;
+    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Intent intent = getIntent();
+        userId = intent.getIntExtra("USER_ID", 0);
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
@@ -46,6 +50,13 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        Fragment home = HomeFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, home)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
@@ -74,7 +85,7 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 4:
                 if (mBiografijaFragment == null) {
-                    mBiografijaFragment = BiografijaFragment.newInstance(7);
+                    mBiografijaFragment = BiografijaFragment.newInstance(userId);
                 }
                 fragment = mBiografijaFragment;
                 break;
@@ -88,25 +99,22 @@ public class MainActivity extends ActionBarActivity
 
     }
 
-    public void onSectionAttached(int number) {
-        // TODO: Postavi naslov
-        switch (number) {
-            case 0:
-                mTitle = getString(R.string.title_premijum);
-                break;
-            case 1:
-                mTitle = getString(R.string.title_hot);
-                break;
-            case 2:
-                mTitle = getString(R.string.title_standardni);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_moji);
-                break;
-            case 4:
-                mTitle = getString(R.string.title_biografija);
-                break;
+    @Override
+    public void idiNaBiografiju() {
+        if (mBiografijaFragment == null) {
+            mBiografijaFragment = BiografijaFragment.newInstance(userId);
         }
+        mActiveFragment = mBiografijaFragment;
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, mBiografijaFragment)
+                .addToBackStack(null)
+                .commit();
+        mNavigationDrawerFragment.closeDrawer();
+    }
+
+    public void onSectionAttached(int number) {
+
     }
 
     public void restoreActionBar() {
@@ -143,17 +151,44 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void izabranPosao(int id) {
-        Fragment detaljiFragment = DetaljiPoslaFragment.newInstance(id);
+        Fragment detaljiFragment = DetaljiPoslaFragment.newInstance(id, userId);
         mActiveFragment = (IFragment)detaljiFragment;
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container, detaljiFragment)
-                .addToBackStack("default")
+                .addToBackStack(null)
                 .commit();
         restoreActionBar();
+    }
+
+    @Override
+    public void setActionBarTitle(int title) {
+        mTitle = getResources().getString(title);
+    }
+
+    @Override
+    public void otvoriPrmijumPoslove() {
+        onNavigationDrawerItemSelected(0);
+    }
+
+    @Override
+    public void otvoriHotPoslove() {
+        onNavigationDrawerItemSelected(1);
+    }
+
+    @Override
+    public void otvoriStandardnePoslove() {
+        onNavigationDrawerItemSelected(2);
+    }
+
+    @Override
+    public void otvoriBiografiju() {
+        onNavigationDrawerItemSelected(4);
     }
 
     public IFragment getActiveFragment() {
         return mActiveFragment;
     }
+
+
 }

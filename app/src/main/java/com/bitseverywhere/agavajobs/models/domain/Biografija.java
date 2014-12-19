@@ -51,7 +51,7 @@ public class Biografija {
     }
 
     public void setProfil(String profil) {
-        this.profil = profil;
+        this.profil = convertNull(profil);
     }
 
     public String getFigura() {
@@ -59,7 +59,7 @@ public class Biografija {
     }
 
     public void setFigura(String figura) {
-        this.figura = figura;
+        this.figura = convertNull(figura);
     }
 
     public String getIme() {
@@ -67,7 +67,7 @@ public class Biografija {
     }
 
     public void setIme(String ime) {
-        this.ime = ime;
+        this.ime = convertNull(ime);
     }
 
     public String getPrezime() {
@@ -75,7 +75,7 @@ public class Biografija {
     }
 
     public void setPrezime(String prezime) {
-        this.prezime = prezime;
+        this.prezime = convertNull(prezime);
     }
 
     public String getJmbg() {
@@ -83,7 +83,7 @@ public class Biografija {
     }
 
     public void setJmbg(String jmbg) {
-        this.jmbg = jmbg;
+        this.jmbg = convertNull(jmbg);
     }
 
     public String getDatumRodjenja() {
@@ -91,7 +91,7 @@ public class Biografija {
     }
 
     public void setDatumRodjenja(String datumRodjenja) {
-        this.datumRodjenja = datumRodjenja;
+        this.datumRodjenja = convertNull(datumRodjenja);
     }
 
     public int getPol() {
@@ -155,7 +155,7 @@ public class Biografija {
     }
 
     public void setAdresa(String adresa) {
-        this.adresa = adresa;
+        this.adresa = convertNull(adresa);
     }
 
     public String getFiksniTelefon() {
@@ -163,7 +163,7 @@ public class Biografija {
     }
 
     public void setFiksniTelefon(String fiksniTelefon) {
-        this.fiksniTelefon = fiksniTelefon;
+        this.fiksniTelefon = convertNull(fiksniTelefon);
     }
 
     public String getMobilniTelefon() {
@@ -171,7 +171,7 @@ public class Biografija {
     }
 
     public void setMobilniTelefon(String mobilniTelefon) {
-        this.mobilniTelefon = mobilniTelefon;
+        this.mobilniTelefon = convertNull(mobilniTelefon);
     }
 
     public String getEmail() {
@@ -179,7 +179,7 @@ public class Biografija {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = convertNull(email);
     }
 
     public boolean isMusko() {
@@ -255,7 +255,7 @@ public class Biografija {
     }
 
     public void setOstalaZnanja(String ostalaZnanja) {
-        this.ostalaZnanja = ostalaZnanja;
+        this.ostalaZnanja = convertNull(ostalaZnanja);
     }
 
     public List<Drzava> getZeljeneDrzaveRada() {
@@ -343,7 +343,7 @@ public class Biografija {
     }
 
     public void setOsudjivan(String osudjivan) {
-        this.osudjivan = osudjivan;
+        this.osudjivan = convertNull(osudjivan);
     }
 
     public String getZdravstveniProblemi() {
@@ -351,7 +351,7 @@ public class Biografija {
     }
 
     public void setZdravstveniProblemi(String zdravstveniProblemi) {
-        this.zdravstveniProblemi = zdravstveniProblemi;
+        this.zdravstveniProblemi = convertNull(zdravstveniProblemi);
     }
 
     public String getOstaleNapomene() {
@@ -359,7 +359,7 @@ public class Biografija {
     }
 
     public void setOstaleNapomene(String ostaleNapomene) {
-        this.ostaleNapomene = ostaleNapomene;
+        this.ostaleNapomene = convertNull(ostaleNapomene);
     }
 
     public int getStatus() {
@@ -392,5 +392,10 @@ public class Biografija {
 
     public void setStudent() {
         setStatus(2);
+    }
+
+    private String convertNull(String value) {
+        if (value != null && value.equals("null")) return null;
+        return value;
     }
 }

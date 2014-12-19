@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,10 +32,12 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bitseverywhere.agavajobs.ImageUtils;
 import com.bitseverywhere.agavajobs.R;
 import com.bitseverywhere.agavajobs.Utils;
+import com.bitseverywhere.agavajobs.activities.IMainActivity;
 import com.bitseverywhere.agavajobs.adapters.RadnoIskustvoAdapter;
 import com.bitseverywhere.agavajobs.models.domain.Biografija;
 import com.bitseverywhere.agavajobs.models.domain.Delatnost;
@@ -70,7 +73,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     private static final String[] VELICINE_ODECE = new String[]{"XS", "S", "M", "L", "XL", "XXL", "XXXL"};
     private static final String[] POZNAVANJE_RADA_NA_RACUNARU = new String[]{"Ne koristi", "Početni nivo", "Napredni nivo", "Ekspert"};
     private int id;
-    private Biografija biografija = new Biografija();
+    private Biografija biografija;
     private ArrayAdapter<Drzava> drzaveAdapter;
     private ArrayAdapter<Mesto> mestaAdapter;
     private EditText ime, prezime, brojPasosa, adresa, fiksniTelefon,
@@ -411,8 +414,16 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     @Override
     public void onStart() {
         super.onStart();
-        new UcitajSifranikeTask().execute();
-        refresh();
+        if (biografija == null) {
+            refresh();
+        }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        IMainActivity main = (IMainActivity)activity;
+        main.setActionBarTitle(R.string.title_biografija);
     }
 
     @Override
@@ -435,8 +446,34 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     }
 
     private void sacuvaj() {
-        biografija.setIme(ime.getText().toString());
-        biografija.setPrezime(prezime.getText().toString());
+        String bIme = ime.getText().toString();
+        if (TextUtils.isEmpty(bIme)) {
+            ime.setError("Unesite ime");
+            return;
+        }
+        String bPrezime = prezime.getText().toString();
+        if (TextUtils.isEmpty(bPrezime)) {
+            prezime.setError("Unesite prezime");
+            return;
+        }
+        String bMobilni = mobilniTelefon.getText().toString();
+        String bFiksni = fiksniTelefon.getText().toString();
+        if (TextUtils.isEmpty(bMobilni) && TextUtils.isEmpty(bFiksni)) {
+            mobilniTelefon.setError("Unesite mobilni ili fiksni telefon");
+            fiksniTelefon.setError("Unesite mobilni ili fiksni telefon");
+            return;
+        }
+        mobilniTelefon.setError(null);
+        fiksniTelefon.setError(null);
+
+        String bEmail = email.getText().toString();
+        if (TextUtils.isEmpty(bEmail)) {
+            email.setError("Unesite e-mail");
+            return;
+        }
+
+        biografija.setIme(bIme);
+        biografija.setPrezime(bPrezime);
         biografija.setJmbg(brojPasosa.getText().toString());
         biografija.setDatumRodjenja(datumRodjenja.getText().toString());
         if (musko.isChecked()) {
@@ -445,6 +482,8 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         if (zensko.isChecked()) {
             biografija.setZensko();
         }
+
+
         biografija.setVisina(Integer.parseInt(visina.getText().toString()));
         biografija.setTezina(Integer.parseInt(tezina.getText().toString()));
         biografija.setBrojCipela(Integer.parseInt(brojCipela.getText().toString()));
@@ -455,9 +494,9 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         biografija.setDrzava(((Drzava) drzava.getSelectedItem()).getId());
         biografija.setMesto(((Mesto) mesto.getSelectedItem()).getId());
         biografija.setAdresa(adresa.getText().toString());
-        biografija.setFiksniTelefon(fiksniTelefon.getText().toString());
-        biografija.setMobilniTelefon(mobilniTelefon.getText().toString());
-        biografija.setEmail(email.getText().toString());
+        biografija.setFiksniTelefon(bFiksni);
+        biografija.setMobilniTelefon(bMobilni);
+        biografija.setEmail(bEmail);
         biografija.setStepenStrucneSpremen(((StepenStrucneSpreme) strucnaSprema.getSelectedItem()).getId());
         biografija.setDelatnost(((Delatnost) delatnost.getSelectedItem()).getId());
         biografija.setZanimanje(((Zanimanje) zanimanje.getSelectedItem()).getId());
@@ -488,9 +527,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
 
     @Override
     public void refresh() {
-        if (id != 0) {
-            new UcitajBiografijuTask().execute(id);
-        }
+        new UcitajPodatkeTask().execute(id);
     }
 
     private void setDrzave(List<Drzava> drzave) {
@@ -519,6 +556,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if (biografija == null) return;
         if (parent == drzava && drzaveAdapter.getCount() > 0) {
             Drzava izabranaDrzava = drzaveAdapter.getItem(position);
             List<Mesto> mesta = izabranaDrzava.getMesta();
@@ -688,15 +726,18 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             startActivityForResult(intent, REQUEST_FIGURE_PICTURE);
         } else if (v == datumRodjenja || v == lblDatumRodjenja) {
             final String dateFormat = "dd.MM.yyyy";
-            Date date;
-            try {
-                date = new SimpleDateFormat(dateFormat).parse(biografija.getDatumRodjenja());
-            } catch (ParseException e) {
-                e.printStackTrace();
-                date = new Date();
-            }
             final Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
+            if (biografija.getDatumRodjenja() != null) {
+                Date date = new Date();
+                try {
+                    date = new SimpleDateFormat(dateFormat).parse(biografija.getDatumRodjenja());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    date = new Date();
+                }
+                calendar.setTime(date);
+            }
+
             DatePickerDialog dialog = new DatePickerDialog(getActivity(),
                     new DatePickerDialog.OnDateSetListener() {
                         @Override
@@ -758,6 +799,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             for (int i = 0; i < selections.size(); i++) {
                 RadnoIskustvo ri = selections.get(i);
                 radnoIskustvoAdapter.remove(ri);
+                biografija.getRadnoIskustvo().remove(ri);
                 selections.remove(ri);
             }
             radnoIskustvoAdapter.notifyDataSetChanged();
@@ -792,24 +834,28 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
 
     public void dodajRadnoIskustvo(RadnoIskustvo edit) {
         radnoIskustvoAdapter.add(edit);
+        biografija.getRadnoIskustvo().add(edit);
         Utils.setListViewHeightBasedOnChildren(this.radnoIskustvo);
         radnoIskustvoAdapter.notifyDataSetChanged();
     }
 
     public void dodajPrihvatljivoZanimanje(Zanimanje zanimanje) {
         prihvatljivaZanimanjaAdapter.add(zanimanje);
+        biografija.getPrihvatljivaZanimanja().add(zanimanje);
         Utils.setListViewHeightBasedOnChildren(prihvatljivaZanimanja);
     }
 
-    private class UcitajSifranikeTask extends AsyncTask<Void, Void, Sifarnici> {
+    private class UcitajPodatkeTask extends AsyncTask<Integer, Void, Sifarnici> {
+
         @Override
-        protected Sifarnici doInBackground(Void... params) {
+        protected Sifarnici doInBackground(Integer... params) {
             Sifarnici sifarnici = new Sifarnici();
             try {
                 sifarnici.setDrzave(HttpService.getInstance().vratiDrzave());
                 sifarnici.setDelatnosti(HttpService.getInstance().vratiDelatnosti());
                 sifarnici.setStrucneSpreme(HttpService.getInstance().vratiStrucneSpreme());
                 sifarnici.setJezici(HttpService.getInstance().vratiJezike());
+                sifarnici.biografija = HttpService.getInstance().vratiBiografiju(params[0]);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
@@ -831,6 +877,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             BiografijaFragment.this.setStrucneSpreme(sifarnici.getStrucneSpreme());
             BiografijaFragment.this.setDelatnosti(sifarnici.getDelatnosti());
             BiografijaFragment.this.setJezici(sifarnici.getJezici());
+            BiografijaFragment.this.setBiografija(sifarnici.biografija);
             if (BiografijaFragment.this.progressBar != null) {
                 BiografijaFragment.this.progressBar.setVisibility(View.GONE);
             }
@@ -839,34 +886,6 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
 
     private void setJezici(List<Jezik> jezici) {
         sviJezici = jezici;
-    }
-
-    private class UcitajBiografijuTask extends AsyncTask<Integer, Void, Biografija> {
-
-        @Override
-        protected void onPreExecute() {
-            if (BiografijaFragment.this.progressBar != null) {
-                BiografijaFragment.this.progressBar.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        protected Biografija doInBackground(Integer... params) {
-            try {
-                return HttpService.getInstance().vratiBiografiju(params[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Biografija biografija) {
-            BiografijaFragment.this.setBiografija(biografija);
-            BiografijaFragment.this.progressBar.setVisibility(View.GONE);
-        }
     }
 
     private class SacuvajBiografijuTask extends AsyncTask<Biografija, Void, Biografija> {
@@ -894,6 +913,8 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             if (exc != null) {
                 BiografijaFragment.this.showError(exc);
             } else {
+                Toast.makeText(getActivity(), "Podaci su uspešno sačuvani",
+                        Toast.LENGTH_LONG).show();
                 BiografijaFragment.this.setBiografija(biografija);
             }
             BiografijaFragment.this.progressBar.setVisibility(View.GONE);
@@ -901,15 +922,19 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     }
 
     private void showError(Exception exc) {
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Greška");
+        builder.setMessage("Greška prilikom snimanja podataka");
+        builder.setPositiveButton("OK", null);
+        builder.show();
     }
-
 
     private class Sifarnici {
         public List<Drzava> drzave;
         public List<StepenStrucneSpreme> strucneSpreme;
         public List<Delatnost> delatnosti;
         public List<Jezik> jezici;
+        public Biografija biografija;
 
         public List<Drzava> getDrzave() {
             return drzave;

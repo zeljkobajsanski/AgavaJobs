@@ -64,9 +64,13 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
         }
         posloviAdapter = new PosloviAdapter(getActivity());
         setListAdapter(posloviAdapter);
-        refresh();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        refresh();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,6 +84,17 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
         super.onAttach(activity);
         try {
             mListener = (IMainActivity) activity;
+            switch (mTipPosla) {
+                case PREMIJUM_POSLOVI:
+                    mListener.setActionBarTitle(R.string.title_premijum);
+                    break;
+                case HOT_POSLOVI:
+                    mListener.setActionBarTitle(R.string.title_hot);
+                    break;
+                case STANDARDNI_POSLOVI:
+                    mListener.setActionBarTitle(R.string.title_standardni);
+                    break;
+            }
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement IMainActivity");

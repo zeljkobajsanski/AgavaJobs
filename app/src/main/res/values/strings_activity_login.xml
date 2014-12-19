@@ -1,0 +1,13 @@
+<resources>
+    <string name="title_activity_login">Prijava</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Lozinka</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Prijava</string>
+
+    <string name="error_invalid_email">Email je pogrešan</string>
+    <string name="error_incorrect_password">Unesite Vašu lozinku</string>
+    <string name="error_field_required">Obavezno polje</string>
+</resources>

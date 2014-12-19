@@ -280,6 +280,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Adresa"
                     android:singleLine="true"
+                    android:capitalize="sentences"
                     style="@style/EditTextYellowTheme"/>
 
 
@@ -365,6 +366,7 @@
                 android:lines="5"
                 android:singleLine="false"
                 android:gravity="top"
+                android:capitalize="sentences"
                 android:hint="Ostala znanja"
                 style="@style/EditTextYellowTheme"/>
             <!-- Radno iskustvo -->
@@ -534,6 +536,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/opacity_black"
+                android:layout_marginTop="4dip"
                 android:padding="8dp"
                 android:text="KATEGORIJE VOZAČKE DOZVOLE"
                 android:textColor="@color/yellow" />
@@ -602,6 +605,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:hint="Da li ste osuđivani?"
+                    android:capitalize="sentences"
                     style="@style/EditTextYellowTheme"/>
                 <EditText
                     android:id="@+id/zdravstveniProblemi"
@@ -609,6 +613,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:hint="Zdravstveni problemi?"
+                    android:capitalize="sentences"
                     style="@style/EditTextYellowTheme"/>
                 </LinearLayout>
             <EditText
@@ -618,6 +623,7 @@
                 android:lines="5"
                 android:gravity="top"
                 android:hint="Ostale napomene"
+                android:capitalize="sentences"
                 style="@style/EditTextYellowTheme"/>
             <TextView
                 android:layout_width="fill_parent"

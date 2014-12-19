@@ -1,6 +1,7 @@
 package com.bitseverywhere.agavajobs.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -21,11 +22,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bitseverywhere.agavajobs.ImageUtils;
 import com.bitseverywhere.agavajobs.R;
+import com.bitseverywhere.agavajobs.activities.LoginActivity;
 import com.bitseverywhere.agavajobs.adapters.MenuItemsAdapter;
 import com.bitseverywhere.agavajobs.models.IMenuItem;
 import com.bitseverywhere.agavajobs.models.domain.Korisnik;
@@ -82,7 +85,8 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Intent intent = getActivity().getIntent();
+        int userId = intent.getIntExtra("USER_ID", 0);
         // Read in the flag indicating whether or not the user has demonstrated awareness of the
         // drawer. See PREF_USER_LEARNED_DRAWER for details.
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -92,9 +96,7 @@ public class NavigationDrawerFragment extends Fragment {
             mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
             mFromSavedInstanceState = true;
         }
-        new GetUserTask().execute(5);
-        // Select either the default item (0) or the last selected item.
-        //selectItem(mCurrentSelectedPosition);
+        new GetUserTask().execute(userId);
     }
 
     @Override
@@ -131,7 +133,12 @@ public class NavigationDrawerFragment extends Fragment {
                 menuItems);
         mDrawerListView.setAdapter(menuItemsAdapter);
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-
+        ((LinearLayout)view.findViewById(R.id.userInfo)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCallbacks.idiNaBiografiju();
+            }
+        });
 
         return view;
     }
@@ -269,13 +276,25 @@ public class NavigationDrawerFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-
+        if (item.getItemId() == R.id.action_logout) {
+            Intent intent = new Intent(this.getActivity(), LoginActivity.class);
+            intent.putExtra("LOGOUT", true);
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void closeDrawer() {
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawer(mFragmentContainerView);
+        }
     }
 
     /**
@@ -311,6 +330,8 @@ public class NavigationDrawerFragment extends Fragment {
          * Called when an item in the navigation drawer is selected.
          */
         void onNavigationDrawerItemSelected(int position);
+
+        void idiNaBiografiju();
     }
 
     private class GetUserTask extends AsyncTask<Integer, Void, Korisnik> {
