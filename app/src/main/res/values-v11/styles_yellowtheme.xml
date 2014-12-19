@@ -16,13 +16,4 @@
       <item name="android:dropDownSelector">@drawable/yellowtheme_list_selector_holo_light</item>
   </style>
 
-  <style name="ProgressBarYellowTheme" parent="android:Widget.Holo.Light.ProgressBar.Horizontal">
-      <item name="android:progressDrawable">@drawable/yellowtheme_progress_horizontal_holo_light</item>
-      <item name="android:indeterminateDrawable">@drawable/yellowtheme_progress_indeterminate_horizontal_holo_light</item>
-  </style>
-
-  <style name="ToggleYellowTheme" parent="android:Widget.Holo.Light.Button.Toggle">
-      <item name="android:background">@drawable/yellowtheme_btn_toggle_holo_light</item>
-  </style>
-
 </resources>

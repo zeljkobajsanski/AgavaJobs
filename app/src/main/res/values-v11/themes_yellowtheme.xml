@@ -9,7 +9,7 @@
 
     <item name="android:editTextBackground">@drawable/yellowtheme_edit_text_holo_light</item>
 
-    <item name="android:textColorHighlight">#99ffd600</item>
+    <item name="android:textColorHighlight">#99ff6430</item>
     <item name="android:textSelectHandleLeft">@drawable/yellowtheme_text_select_handle_left</item>
     <item name="android:textSelectHandleRight">@drawable/yellowtheme_text_select_handle_right</item>
     <item name="android:textSelectHandle">@drawable/yellowtheme_text_select_handle_middle</item>
@@ -23,10 +23,6 @@
     <item name="android:imageButtonStyle">@style/ImageButtonYellowTheme</item>
 
     <item name="android:dropDownSpinnerStyle">@style/SpinnerYellowTheme</item>
-
-    <item name="android:progressBarStyleHorizontal">@style/ProgressBarYellowTheme</item>
-
-    <item name="android:buttonStyleToggle">@style/ToggleYellowTheme</item>
 
     <item name="android:listChoiceBackgroundIndicator">@drawable/yellowtheme_list_selector_holo_light</item>
 

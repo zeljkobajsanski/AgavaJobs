@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--<color name="nexus">#8A033A</color>-->
-    <color name="nexus">#3a5795</color>
+    <color name="nexus">#45008E</color>
     <color name="muted">#bbb</color>
     <color name="white">#fff</color>
-    <color name="yellow">#FFD600</color>
+    <color name="yellow">#FF6430</color>
     <color name="opacity_black">#59000000</color>
 </resources>

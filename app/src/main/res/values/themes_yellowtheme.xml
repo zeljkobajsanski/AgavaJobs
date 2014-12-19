@@ -9,7 +9,7 @@
 
     <item name="android:editTextStyle">@style/EditTextYellowTheme</item>
 
-    <item name="android:textColorHighlight">#99ffd600</item>
+    <item name="android:textColorHighlight">#99ff6430</item>
 
     <item name="android:checkboxStyle">@style/CheckBoxYellowTheme</item>
 
@@ -22,10 +22,6 @@
     <item name="android:spinnerStyle">@style/SpinnerYellowTheme</item>
 
     <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemYellowTheme</item>
-
-    <item name="android:progressBarStyleHorizontal">@style/ProgressBarYellowTheme</item>
-
-    <item name="android:buttonStyleToggle">@style/ToggleYellowTheme</item>
 
     <item name="android:listViewStyle">@style/ListViewYellowTheme</item>
 
