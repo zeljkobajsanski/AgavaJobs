@@ -7,6 +7,7 @@
     <string name="title_standardni">Standardni poslovi</string>
     <string name="title_moji">Moji konkursi</string>
     <string name="title_biografija">Biografija</string>
+    <string name="title_detalji">Detalji posla</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_refresh">Osveži</string>

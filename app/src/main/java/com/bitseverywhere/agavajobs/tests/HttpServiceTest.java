@@ -38,4 +38,10 @@ public class HttpServiceTest extends InstrumentationTestCase {
     public void testUcitajBiografiju() throws IOException, JSONException {
         Biografija cv = HttpService.getInstance().vratiBiografiju(3232);
     }
+
+    public void testRegistrujNalog() throws Exception {
+        int userId = HttpService.getInstance().registrujNalog("Zeljko", "Bajsanski",
+                "bitseverywhere@gmail.com", "1");
+        Assert.assertTrue(userId > 0);
+    }
 }

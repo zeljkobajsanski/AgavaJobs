@@ -101,6 +101,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     private CheckBox a, b, c, d, e, f, m;
     private EditText osudjivan, zdravstveniProblemi, ostaleNapomene;
     private RadioButton nezaposlen, zaposlen, student;
+    private IMainActivity mainActivity;
 
     public static BiografijaFragment newInstance(int id) {
         BiografijaFragment fragment = new BiografijaFragment();
@@ -414,6 +415,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     @Override
     public void onStart() {
         super.onStart();
+        mainActivity.setActionBarTitle(R.string.title_biografija);
         if (biografija == null) {
             refresh();
         }
@@ -422,8 +424,8 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        IMainActivity main = (IMainActivity)activity;
-        main.setActionBarTitle(R.string.title_biografija);
+        mainActivity = (IMainActivity)activity;
+
     }
 
     @Override
@@ -813,12 +815,16 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             profil.setImageBitmap(imageBitmap);
-            biografija.setProfil(ImageUtils.getStringBase64FromBitmap(imageBitmap));
+            if (biografija != null) {
+                biografija.setProfil(ImageUtils.getStringBase64FromBitmap(imageBitmap));
+            }
         }
         if (requestCode == REQUEST_FIGURE_PICTURE && resultCode == Activity.RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            biografija.setFigura(ImageUtils.getStringBase64FromBitmap(imageBitmap));
+            if (biografija != null) {
+                biografija.setFigura(ImageUtils.getStringBase64FromBitmap(imageBitmap));
+            }
             figura.setImageBitmap(imageBitmap);
         }
     }

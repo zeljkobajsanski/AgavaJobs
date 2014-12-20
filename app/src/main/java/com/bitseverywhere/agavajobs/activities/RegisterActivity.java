@@ -1,19 +1,20 @@
 package com.bitseverywhere.agavajobs.activities;
 
-import android.content.Context;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.AttributeSet;
 import android.util.Patterns;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.bitseverywhere.agavajobs.R;
 import com.bitseverywhere.agavajobs.services.HttpService;
@@ -22,6 +23,8 @@ import java.util.regex.Pattern;
 
 public class RegisterActivity extends ActionBarActivity implements View.OnClickListener {
 
+    private View registerForm;
+    private ProgressBar progressBar;
     private EditText ime, prezime, email, lozinka;
 
     @Override
@@ -34,6 +37,8 @@ public class RegisterActivity extends ActionBarActivity implements View.OnClickL
         lozinka = (EditText) findViewById(R.id.loznika);
         Button btn = (Button)findViewById(R.id.btnRegister);
         btn.setOnClickListener(this);
+        progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        registerForm = findViewById(R.id.registerForm);
     }
 
     @Override
@@ -75,6 +80,48 @@ public class RegisterActivity extends ActionBarActivity implements View.OnClickL
             setResult(RESULT_OK, intent);
             finish();
         }
+        showProgress(false);
+    }
+
+    private void showError(Exception exc) {
+        Toast.makeText(this, exc.getMessage(), Toast.LENGTH_LONG).show();
+        showProgress(false);
+    }
+
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    public void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            registerForm.setVisibility(show ? View.GONE : View.VISIBLE);
+            registerForm.animate().setDuration(shortAnimTime).alpha(
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    registerForm.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+            progressBar.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+            registerForm.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
     }
 
     private class RegisterTask extends AsyncTask<Void, Void, Integer> {
@@ -90,6 +137,11 @@ public class RegisterActivity extends ActionBarActivity implements View.OnClickL
         }
 
         @Override
+        protected void onPreExecute() {
+            RegisterActivity.this.showProgress(true);
+        }
+
+        @Override
         protected Integer doInBackground(Void... params) {
             try {
                 return HttpService.getInstance().registrujNalog(ime, prezime, email, lozinka);
@@ -101,9 +153,15 @@ public class RegisterActivity extends ActionBarActivity implements View.OnClickL
 
         @Override
         protected void onPostExecute(Integer integer) {
-            RegisterActivity.this.registered(integer);
+            if (exc != null) {
+                RegisterActivity.this.showError(exc);
+            } else {
+                RegisterActivity.this.registered(integer);
+            }
         }
     }
+
+
 
 
 }

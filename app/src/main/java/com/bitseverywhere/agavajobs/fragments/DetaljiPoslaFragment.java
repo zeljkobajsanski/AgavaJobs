@@ -1,6 +1,7 @@
 package com.bitseverywhere.agavajobs.fragments;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import com.bitseverywhere.agavajobs.ImageUtils;
 import com.bitseverywhere.agavajobs.R;
+import com.bitseverywhere.agavajobs.activities.IMainActivity;
 import com.bitseverywhere.agavajobs.adapters.GalleryAdapter;
 import com.bitseverywhere.agavajobs.models.domain.DetaljiPosla;
 import com.bitseverywhere.agavajobs.services.HttpService;
@@ -49,6 +51,7 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
     private TextView sifraOglasa, zanimanje, lokacija, brojIzvrsilaca, obrazovanje,
                     rok1;
     private Gallery gallery;
+    private IMainActivity mainActivity;
 
     public static DetaljiPoslaFragment newInstance(int id, int idKorisnika) {
         DetaljiPoslaFragment fragment = new DetaljiPoslaFragment();
@@ -112,6 +115,18 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mainActivity = (IMainActivity)activity;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mainActivity.setActionBarTitle(R.string.title_detalji);
     }
 
     private void konkurisi() {

@@ -11,8 +11,26 @@
         android:id="@+id/login_form"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical">
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@color/opacity_black">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Prijava"
+            android:textColor="@color/yellow"
+            android:textSize="24dp"
+            android:padding="4dp"
+            />
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/yellow"
+            android:layout_marginBottom="48dp"
+            ></FrameLayout>
 
         <EditText
             android:id="@+id/email"
@@ -21,6 +39,7 @@
             android:hint="Email"
             android:gravity="center"
             android:inputType="textEmailAddress"
+            android:textSize="18dp"
             style="@style/EditTextYellowTheme"
             />
         <EditText
@@ -28,6 +47,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:hint="Lozinka"
+            android:textSize="18dp"
             android:inputType="textPassword"
             android:gravity="center"
             style="@style/EditTextYellowTheme"
@@ -42,12 +62,14 @@
                 android:id="@+id/btnLogin"
                 android:layout_width="140dip"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:text="Prijavi me" />
 
             <Button
                 android:id="@+id/btnRegister"
                 android:layout_width="140dip"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:text="Registruj me" />
 
             </LinearLayout>
