@@ -15,6 +15,7 @@ import com.bitseverywhere.agavajobs.fragments.BiografijaFragment;
 import com.bitseverywhere.agavajobs.fragments.DetaljiPoslaFragment;
 import com.bitseverywhere.agavajobs.fragments.HomeFragment;
 import com.bitseverywhere.agavajobs.fragments.IFragment;
+import com.bitseverywhere.agavajobs.fragments.MojiKonkursiFragment;
 import com.bitseverywhere.agavajobs.fragments.NavigationDrawerFragment;
 import com.bitseverywhere.agavajobs.fragments.PregledPoslovaFragment;
 
@@ -82,6 +83,9 @@ public class MainActivity extends ActionBarActivity
                     mStandardniPoslovi = PregledPoslovaFragment.newInstance(PregledPoslovaFragment.STANDARDNI_POSLOVI);
                 }
                 fragment = mStandardniPoslovi;
+                break;
+            case 3:
+                fragment = MojiKonkursiFragment.newInstance(userId);
                 break;
             case 4:
                 if (mBiografijaFragment == null) {

@@ -11,8 +11,9 @@ public class Posao {
     private String rok;
     private String zanimanje;
     private String slika;
+    private int brojPrijavljenih;
 
-    public Posao(int ID, String naziv, String poslodavac, String lokacija, String rok, String zanimanje, String slika) {
+    public Posao(int ID, String naziv, String poslodavac, String lokacija, String rok, String zanimanje, String slika, int brojPrijavljenih) {
         this.ID = ID;
         this.naziv = naziv;
         this.poslodavac = poslodavac;
@@ -20,6 +21,7 @@ public class Posao {
         this.rok = rok;
         this.zanimanje = zanimanje;
         this.slika = slika;
+        this.brojPrijavljenih = brojPrijavljenih;
     }
 
     public int getID() {
@@ -76,5 +78,13 @@ public class Posao {
 
     public void setSlika(String slika) {
         this.slika = slika;
+    }
+
+    public int getBrojPrijavljenih() {
+        return brojPrijavljenih;
+    }
+
+    public void setBrojPrijavljenih(int brojPrijavljenih) {
+        this.brojPrijavljenih = brojPrijavljenih;
     }
 }

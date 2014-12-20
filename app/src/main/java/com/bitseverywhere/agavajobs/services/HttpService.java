@@ -428,6 +428,20 @@ public class HttpService {
         return status.getReasonPhrase();
     }
 
+    public List<Posao> vratiMojeKonkurse(int userId) throws Exception {
+        String response = httpGet(API_URL + "poslovi/MojiKonkursi/" + userId);
+        JSONArray json = new JSONArray(response);
+        List<Posao> poslovi = new ArrayList<>();
+        for (int i = 0; i < json.length(); i++) {
+            JSONObject item = json.getJSONObject(i);
+            poslovi.add(new Posao(item.getInt("Id"),
+                    item.getString("Naziv"), item.getString("Poslodavac"), item.getString("Lokacija"),
+                    item.getString("Rok"), item.getString("Zanimanje"), null,
+                    item.getInt("BrojPrijavljenih")));
+        }
+        return poslovi;
+    }
+
     private List<Posao> vratiPoslove(String url) throws IOException, JSONException {
         String response = httpGet(url);
         JSONArray result = new JSONArray(response);
@@ -445,7 +459,8 @@ public class HttpService {
                     json.getString("Lokacija"),
                     json.getString("Rok"),
                     json.getString("Zanimanje"),
-                    json.getString("Image"));
+                    json.getString("Image"),
+                    json.getInt("BrojPrijavljenih"));
             poslovi.add(posao);
         }
         return poslovi;

@@ -37,8 +37,8 @@ import java.io.IOException;
  */
 public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implements IFragment {
 
-    private static final String ID_POSLA = "id";
-    private static final String ID_KORISNIKA = "idKorisnika";
+    public static final String ID_POSLA = "id";
+    public static final String ID_KORISNIKA = "idKorisnika";
 
     private int id;
     private int idKorisnika;

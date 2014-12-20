@@ -3,6 +3,7 @@ package com.bitseverywhere.agavajobs.tests;
 import android.test.InstrumentationTestCase;
 
 import com.bitseverywhere.agavajobs.models.domain.Biografija;
+import com.bitseverywhere.agavajobs.models.domain.Posao;
 import com.bitseverywhere.agavajobs.services.HttpService;
 
 import junit.framework.Assert;
@@ -10,6 +11,7 @@ import junit.framework.Assert;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by Željko on 18.12.2014..
@@ -43,5 +45,10 @@ public class HttpServiceTest extends InstrumentationTestCase {
         int userId = HttpService.getInstance().registrujNalog("Zeljko", "Bajsanski",
                 "bitseverywhere@gmail.com", "1");
         Assert.assertTrue(userId > 0);
+    }
+
+    public void testVratiMojeKonkurse() throws Exception {
+        List<Posao> poslovi = HttpService.getInstance().vratiMojeKonkurse(3232);
+        Assert.assertTrue(poslovi.size() > 0);
     }
 }

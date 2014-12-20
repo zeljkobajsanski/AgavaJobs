@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/opacity_black"
+    android:padding="8dp">
+    <TextView
+        android:id="@+id/kompanija"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BitsEverywhere"
+        android:textColor="@color/muted"/>
+    <TextView
+        android:id="@+id/lokacija"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Novi Sad, Srbija"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/white"/>
+    <TextView
+        android:id="@+id/nazivOglasa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Android Developer"
+        android:textColor="@color/yellow"
+        android:layout_below="@id/kompanija"/>
+    <TextView
+        android:id="@+id/brojPrijavljenih"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:layout_below="@id/lokacija"
+        android:layout_alignParentRight="true"
+        android:text="Do popune"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Broj prijavljenih: "
+        android:layout_below="@id/lokacija"
+        android:layout_toLeftOf="@id/brojPrijavljenih"
+        android:textColor="@color/muted"/>
+</RelativeLayout>
