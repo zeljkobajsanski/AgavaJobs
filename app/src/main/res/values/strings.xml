@@ -28,5 +28,6 @@
     <string name="title_activity_register">Kreiranje Agava naloga</string>
     <string name="title_activity_main">Agava Jobs</string>
     <string name="title_moji_konkursi">Moji konkursi</string>
+    <string name="web_site">http://jobs.agava.rs</string>
 
 </resources>

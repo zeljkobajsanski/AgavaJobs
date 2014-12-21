@@ -41,6 +41,7 @@ public class MojiKonkursiFragment extends ListFragment implements IFragment {
     private IMainActivity mainActivity;
     private ProgressBar progressBar;
     private ListView listView;
+    private MenuItem refreshBtn;
 
     /**
      * Use this factory method to create a new instance of
@@ -86,7 +87,16 @@ public class MojiKonkursiFragment extends ListFragment implements IFragment {
     }
 
     private void showProgress(boolean isBusy) {
-        progressBar.setVisibility(isBusy ? View.VISIBLE : View.GONE);
+        if (refreshBtn != null) {
+            if (isBusy) {
+                refreshBtn.setActionView(R.layout.progress_bar);
+            } else {
+                refreshBtn.setActionView(null);
+            }
+        }
+        if (progressBar != null) {
+            progressBar.setVisibility(isBusy && refreshBtn == null ? View.VISIBLE : View.GONE);
+        }
     }
 
     @Override
@@ -106,6 +116,7 @@ public class MojiKonkursiFragment extends ListFragment implements IFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.poslovi, menu);
+        refreshBtn = menu.getItem(0);
     }
 
     @Override

@@ -125,7 +125,10 @@ public class MainActivity extends ActionBarActivity
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
+        actionBar.setTitle("Agava Jobs");
+        actionBar.setSubtitle(mTitle);
+        actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.ab_bottom_solid_nexusactionbar));
+        actionBar.setCustomView(R.layout.yellowtheme_tab_indicator_holo);
     }
 
 

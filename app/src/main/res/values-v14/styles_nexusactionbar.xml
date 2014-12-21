@@ -19,7 +19,7 @@
 
 <resources>
 
-    <style name="Theme.Nexusactionbar" parent="@style/YellowTheme">
+    <style name="Theme.Nexusactionbar" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <item name="android:actionBarItemBackground">@drawable/selectable_background_nexusactionbar</item>
         <item name="android:popupMenuStyle">@style/PopupMenu.Nexusactionbar</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Nexusactionbar</item>

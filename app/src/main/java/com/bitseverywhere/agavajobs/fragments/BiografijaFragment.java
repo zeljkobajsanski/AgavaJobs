@@ -102,6 +102,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     private EditText osudjivan, zdravstveniProblemi, ostaleNapomene;
     private RadioButton nezaposlen, zaposlen, student;
     private IMainActivity mainActivity;
+    private MenuItem refreshBtn;
 
     public static BiografijaFragment newInstance(int id) {
         BiografijaFragment fragment = new BiografijaFragment();
@@ -431,6 +432,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.biografija, menu);
+        refreshBtn = menu.getItem(1);
     }
 
     @Override
@@ -872,8 +874,11 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
 
         @Override
         protected void onPreExecute() {
-            if (BiografijaFragment.this.progressBar != null) {
+            if (BiografijaFragment.this.progressBar != null && BiografijaFragment.this.refreshBtn == null) {
                 BiografijaFragment.this.progressBar.setVisibility(View.VISIBLE);
+            }
+            if (BiografijaFragment.this.refreshBtn != null) {
+                BiografijaFragment.this.refreshBtn.setActionView(R.layout.progress_bar);
             }
         }
 
@@ -887,6 +892,9 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             if (BiografijaFragment.this.progressBar != null) {
                 BiografijaFragment.this.progressBar.setVisibility(View.GONE);
             }
+            if (BiografijaFragment.this.refreshBtn != null) {
+                BiografijaFragment.this.refreshBtn.setActionView(null);
+            }
         }
     }
 
@@ -899,6 +907,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         @Override
         protected void onPreExecute() {
             BiografijaFragment.this.progressBar.setVisibility(View.VISIBLE);
+            //BiografijaFragment.this.refreshBtn.setActionView(R.layout.progress_bar);
         }
 
         private Exception exc;
@@ -924,6 +933,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
                 BiografijaFragment.this.setBiografija(biografija);
             }
             BiografijaFragment.this.progressBar.setVisibility(View.GONE);
+
         }
     }
 

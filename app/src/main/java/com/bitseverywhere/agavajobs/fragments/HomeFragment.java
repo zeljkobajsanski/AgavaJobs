@@ -125,7 +125,7 @@ public class HomeFragment extends android.support.v4.app.Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        main.setActionBarTitle(R.string.app_name);
+        main.setActionBarTitle(R.string.web_site);
         new UcitajTask().execute();
     }
 

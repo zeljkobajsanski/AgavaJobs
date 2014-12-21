@@ -39,6 +39,7 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
     private IMainActivity mListener;
     private ProgressBar progressBar;
     private PosloviAdapter posloviAdapter;
+    private MenuItem refreshBtn;
 
     public static PregledPoslovaFragment newInstance(int tipPosla) {
         PregledPoslovaFragment fragment = new PregledPoslovaFragment();
@@ -110,6 +111,7 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.poslovi, menu);
+        refreshBtn = menu.getItem(0);
     }
 
     @Override
@@ -145,8 +147,11 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
 
         @Override
         protected void onPreExecute() {
-            if (PregledPoslovaFragment.this.progressBar != null) {
+            if (PregledPoslovaFragment.this.progressBar != null && PregledPoslovaFragment.this.refreshBtn == null) {
                 PregledPoslovaFragment.this.progressBar.setVisibility(View.VISIBLE);
+            }
+            if (PregledPoslovaFragment.this.refreshBtn != null) {
+                PregledPoslovaFragment.this.refreshBtn.setActionView(R.layout.progress_bar);
             }
         }
 
@@ -175,6 +180,9 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
             PregledPoslovaFragment.this.rebind(poslovi);
             if (PregledPoslovaFragment.this.progressBar != null) {
                 PregledPoslovaFragment.this.progressBar.setVisibility(View.GONE);
+            }
+            if (PregledPoslovaFragment.this.refreshBtn != null) {
+                PregledPoslovaFragment.this.refreshBtn.setActionView(null);
             }
         }
     }

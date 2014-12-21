@@ -52,6 +52,7 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
                     rok1;
     private Gallery gallery;
     private IMainActivity mainActivity;
+    private MenuItem refreshBtn;
 
     public static DetaljiPoslaFragment newInstance(int id, int idKorisnika) {
         DetaljiPoslaFragment fragment = new DetaljiPoslaFragment();
@@ -101,6 +102,7 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.detalji_posla, menu);
+        refreshBtn = menu.getItem(1);
     }
 
     @Override
@@ -190,8 +192,11 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
 
         @Override
         protected void onPreExecute() {
-            if (DetaljiPoslaFragment.this.progressBar != null) {
+            if (DetaljiPoslaFragment.this.progressBar != null && DetaljiPoslaFragment.this.refreshBtn == null) {
                 DetaljiPoslaFragment.this.progressBar.setVisibility(View.VISIBLE);
+            }
+            if (DetaljiPoslaFragment.this.refreshBtn != null) {
+                DetaljiPoslaFragment.this.refreshBtn.setActionView(R.layout.progress_bar);
             }
         }
 
@@ -213,6 +218,9 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
             DetaljiPoslaFragment.this.bind(detaljiPosla);
             if (DetaljiPoslaFragment.this.progressBar != null) {
                 DetaljiPoslaFragment.this.progressBar.setVisibility(View.INVISIBLE);
+            }
+            if (DetaljiPoslaFragment.this.refreshBtn != null) {
+                DetaljiPoslaFragment.this.refreshBtn.setActionView(null);
             }
         }
     }
