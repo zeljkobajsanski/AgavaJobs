@@ -40,6 +40,7 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
     private ProgressBar progressBar;
     private PosloviAdapter posloviAdapter;
     private MenuItem refreshBtn;
+    private View noConnection;
 
     public static PregledPoslovaFragment newInstance(int tipPosla) {
         PregledPoslovaFragment fragment = new PregledPoslovaFragment();
@@ -88,6 +89,14 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_poslovi, container, false);
         progressBar = (ProgressBar)view.findViewById(R.id.progressBar);
+        noConnection = view.findViewById(R.id.noConnection);
+        noConnection.setVisibility(View.GONE);
+        noConnection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refresh();
+            }
+        });
         return view;
     }
 
@@ -145,6 +154,8 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
 
     private class UcitajPosloveTask extends AsyncTask<Integer, Void, List<Posao>> {
 
+        private boolean error;
+
         @Override
         protected void onPreExecute() {
             if (PregledPoslovaFragment.this.progressBar != null && PregledPoslovaFragment.this.refreshBtn == null) {
@@ -152,6 +163,9 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
             }
             if (PregledPoslovaFragment.this.refreshBtn != null) {
                 PregledPoslovaFragment.this.refreshBtn.setActionView(R.layout.progress_bar);
+            }
+            if (PregledPoslovaFragment.this.noConnection != null) {
+                PregledPoslovaFragment.this.noConnection.setVisibility(View.GONE);
             }
         }
 
@@ -183,6 +197,9 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
             }
             if (PregledPoslovaFragment.this.refreshBtn != null) {
                 PregledPoslovaFragment.this.refreshBtn.setActionView(null);
+            }
+            if (PregledPoslovaFragment.this.noConnection != null && error) {
+                PregledPoslovaFragment.this.noConnection.setVisibility(View.VISIBLE);
             }
         }
     }

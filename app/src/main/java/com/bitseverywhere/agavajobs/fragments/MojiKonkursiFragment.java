@@ -24,6 +24,7 @@ import com.bitseverywhere.agavajobs.models.domain.DetaljiPosla;
 import com.bitseverywhere.agavajobs.models.domain.Posao;
 import com.bitseverywhere.agavajobs.services.HttpService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class MojiKonkursiFragment extends ListFragment implements IFragment {
     private ProgressBar progressBar;
     private ListView listView;
     private MenuItem refreshBtn;
+    private View noConnection;
 
     /**
      * Use this factory method to create a new instance of
@@ -83,6 +85,14 @@ public class MojiKonkursiFragment extends ListFragment implements IFragment {
         View view = inflater.inflate(R.layout.fragment_moji_konkursi, container, false);
         progressBar = (ProgressBar)view.findViewById(R.id.progressBar);
         listView = (ListView)view.findViewById(android.R.id.list);
+        noConnection = view.findViewById(R.id.noConnection);
+        noConnection.setVisibility(View.GONE);
+        noConnection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refresh();
+            }
+        });
         return view;
     }
 
@@ -139,11 +149,23 @@ public class MojiKonkursiFragment extends ListFragment implements IFragment {
         adapter.addAll(poslovi);
     }
 
+    private void showConnectionError(boolean show) {
+        if (noConnection == null) return;
+        if (show) {
+            noConnection.setVisibility(View.VISIBLE);
+        } else {
+            noConnection.setVisibility(View.GONE);
+        }
+    }
+
     private class UcitajPodatkeTask extends AsyncTask<Integer, Void, List<Posao>> {
+
+        private boolean error;
 
         @Override
         protected void onPreExecute() {
             MojiKonkursiFragment.this.showProgress(true);
+            MojiKonkursiFragment.this.showConnectionError(false);
         }
 
         @Override
@@ -151,7 +173,7 @@ public class MojiKonkursiFragment extends ListFragment implements IFragment {
             try {
                 return HttpService.getInstance().vratiMojeKonkurse(params[0]);
             } catch (Exception e) {
-                e.printStackTrace();
+                error = true;
             }
             return new ArrayList<>();
         }
@@ -160,8 +182,13 @@ public class MojiKonkursiFragment extends ListFragment implements IFragment {
         protected void onPostExecute(List<Posao> poslovi) {
             MojiKonkursiFragment.this.source(poslovi);
             MojiKonkursiFragment.this.showProgress(false);
+            if (error) {
+                MojiKonkursiFragment.this.showConnectionError(true);
+            }
         }
     }
+
+
 
 
 }

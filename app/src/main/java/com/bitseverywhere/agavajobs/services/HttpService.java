@@ -22,6 +22,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -469,7 +472,9 @@ public class HttpService {
 
     private String httpGet(String url) throws IOException {
         StringBuilder builder = new StringBuilder();
-        HttpClient client = new DefaultHttpClient();
+        HttpParams p = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(p, 30000);
+        HttpClient client = new DefaultHttpClient(p);
         HttpGet getMethod = new HttpGet(url);
         HttpResponse response = client.execute(getMethod);
         StatusLine status = response.getStatusLine();

@@ -29,5 +29,6 @@
     <string name="title_activity_main">Agava Jobs</string>
     <string name="title_moji_konkursi">Moji konkursi</string>
     <string name="web_site">http://jobs.agava.rs</string>
+    <string name="no_connection">Prekid u komunikaciji sa serverom. Proverite Internet konekciju</string>
 
 </resources>

@@ -103,6 +103,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     private RadioButton nezaposlen, zaposlen, student;
     private IMainActivity mainActivity;
     private MenuItem refreshBtn;
+    private View noConnection;
 
     public static BiografijaFragment newInstance(int id) {
         BiografijaFragment fragment = new BiografijaFragment();
@@ -410,6 +411,15 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         nezaposlen = (RadioButton)view.findViewById(R.id.nezaposlen);
         zaposlen = (RadioButton)view.findViewById(R.id.zaposlen);
         student = (RadioButton)view.findViewById(R.id.student);
+
+        noConnection = view.findViewById(R.id.noConnection);
+        noConnection.setVisibility(View.GONE);
+        noConnection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refresh();
+            }
+        });
         return view;
     }
 
@@ -731,7 +741,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         } else if (v == datumRodjenja || v == lblDatumRodjenja) {
             final String dateFormat = "dd.MM.yyyy";
             final Calendar calendar = Calendar.getInstance();
-            if (biografija.getDatumRodjenja() != null) {
+            if (biografija != null && biografija.getDatumRodjenja() != null) {
                 Date date = new Date();
                 try {
                     date = new SimpleDateFormat(dateFormat).parse(biografija.getDatumRodjenja());
@@ -855,6 +865,8 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
 
     private class UcitajPodatkeTask extends AsyncTask<Integer, Void, Sifarnici> {
 
+        private boolean error;
+
         @Override
         protected Sifarnici doInBackground(Integer... params) {
             Sifarnici sifarnici = new Sifarnici();
@@ -865,7 +877,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
                 sifarnici.setJezici(HttpService.getInstance().vratiJezike());
                 sifarnici.biografija = HttpService.getInstance().vratiBiografiju(params[0]);
             } catch (IOException e) {
-                e.printStackTrace();
+                error = true;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -879,6 +891,9 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             }
             if (BiografijaFragment.this.refreshBtn != null) {
                 BiografijaFragment.this.refreshBtn.setActionView(R.layout.progress_bar);
+            }
+            if (BiografijaFragment.this.noConnection != null) {
+                BiografijaFragment.this.noConnection.setVisibility(View.GONE);
             }
         }
 
@@ -894,6 +909,9 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             }
             if (BiografijaFragment.this.refreshBtn != null) {
                 BiografijaFragment.this.refreshBtn.setActionView(null);
+            }
+            if (error) {
+                BiografijaFragment.this.noConnection.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -946,10 +964,10 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
     }
 
     private class Sifarnici {
-        public List<Drzava> drzave;
-        public List<StepenStrucneSpreme> strucneSpreme;
-        public List<Delatnost> delatnosti;
-        public List<Jezik> jezici;
+        public List<Drzava> drzave = new ArrayList<>();
+        public List<StepenStrucneSpreme> strucneSpreme = new ArrayList<>();
+        public List<Delatnost> delatnosti = new ArrayList<>();
+        public List<Jezik> jezici = new ArrayList<>();
         public Biografija biografija;
 
         public List<Drzava> getDrzave() {

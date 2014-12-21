@@ -53,6 +53,7 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
     private Gallery gallery;
     private IMainActivity mainActivity;
     private MenuItem refreshBtn;
+    private View noConnection;
 
     public static DetaljiPoslaFragment newInstance(int id, int idKorisnika) {
         DetaljiPoslaFragment fragment = new DetaljiPoslaFragment();
@@ -96,6 +97,14 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
         rok1 = (TextView)view.findViewById(R.id.rok1);
         gallery = (Gallery)view.findViewById(R.id.gallery);
         nazivPoslodavca = (TextView)view.findViewById(R.id.nazivPoslodavca);
+        noConnection = view.findViewById(R.id.noConnection);
+        noConnection.setVisibility(View.GONE);
+        noConnection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refresh();
+            }
+        });
         return view;
     }
 
@@ -190,6 +199,8 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
 
     private class UcitajDetaljePoslaTask extends AsyncTask<Integer, Void, DetaljiPosla> {
 
+        private boolean error;
+
         @Override
         protected void onPreExecute() {
             if (DetaljiPoslaFragment.this.progressBar != null && DetaljiPoslaFragment.this.refreshBtn == null) {
@@ -197,6 +208,9 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
             }
             if (DetaljiPoslaFragment.this.refreshBtn != null) {
                 DetaljiPoslaFragment.this.refreshBtn.setActionView(R.layout.progress_bar);
+            }
+            if (DetaljiPoslaFragment.this.noConnection != null) {
+                DetaljiPoslaFragment.this.noConnection.setVisibility(View.GONE);
             }
         }
 
@@ -207,6 +221,7 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
                 return http.vratiDetaljePosla(params[0]);
             } catch (IOException e) {
                 e.printStackTrace();
+                error = true;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -221,6 +236,9 @@ public class DetaljiPoslaFragment extends android.support.v4.app.Fragment implem
             }
             if (DetaljiPoslaFragment.this.refreshBtn != null) {
                 DetaljiPoslaFragment.this.refreshBtn.setActionView(null);
+            }
+            if (DetaljiPoslaFragment.this.noConnection != null && error) {
+                DetaljiPoslaFragment.this.noConnection.setVisibility(View.VISIBLE);
             }
         }
     }
