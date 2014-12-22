@@ -472,9 +472,10 @@ public class HttpService {
 
     private String httpGet(String url) throws IOException {
         StringBuilder builder = new StringBuilder();
-        HttpParams p = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(p, 30000);
-        HttpClient client = new DefaultHttpClient(p);
+//        HttpParams p = new BasicHttpParams();
+//        HttpConnectionParams.setConnectionTimeout(p, 30000);
+        //HttpClient client = new DefaultHttpClient(p);
+        HttpClient client = new DefaultHttpClient();
         HttpGet getMethod = new HttpGet(url);
         HttpResponse response = client.execute(getMethod);
         StatusLine status = response.getStatusLine();

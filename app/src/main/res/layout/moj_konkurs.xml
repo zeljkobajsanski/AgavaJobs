@@ -39,9 +39,4 @@
         android:layout_toLeftOf="@id/brojPrijavljenih"
         android:textColor="@color/muted"/>
 
-    <include
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        layout="@layout/no_connection"
-        android:layout_centerInParent="true" />
 </RelativeLayout>

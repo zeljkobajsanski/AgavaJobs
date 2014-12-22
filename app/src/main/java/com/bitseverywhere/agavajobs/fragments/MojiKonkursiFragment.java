@@ -182,9 +182,7 @@ public class MojiKonkursiFragment extends ListFragment implements IFragment {
         protected void onPostExecute(List<Posao> poslovi) {
             MojiKonkursiFragment.this.source(poslovi);
             MojiKonkursiFragment.this.showProgress(false);
-            if (error) {
-                MojiKonkursiFragment.this.showConnectionError(true);
-            }
+            MojiKonkursiFragment.this.showConnectionError(error);
         }
     }
 

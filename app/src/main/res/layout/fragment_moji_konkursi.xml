@@ -18,8 +18,8 @@
         android:visibility="gone" />
     <include
         android:id="@+id/noConnection"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         layout="@layout/no_connection"
         android:layout_centerInParent="true" />
 </RelativeLayout>

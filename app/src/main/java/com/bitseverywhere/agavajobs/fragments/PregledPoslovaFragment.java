@@ -183,6 +183,7 @@ public class PregledPoslovaFragment extends android.support.v4.app.ListFragment 
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                error = true;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
