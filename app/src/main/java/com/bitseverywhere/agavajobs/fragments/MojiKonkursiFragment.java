@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -70,8 +72,16 @@ public class MojiKonkursiFragment extends ListFragment implements IFragment {
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        Log.v("MojiKonkursi", "onAttach");
+        mainActivity = (IMainActivity)activity;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v("MojiKonkursi", "onCreate");
         setHasOptionsMenu(true);
         if (getArguments() != null) {
             idKorisnika = getArguments().getInt(ID_KORISNIKA);
@@ -82,6 +92,7 @@ public class MojiKonkursiFragment extends ListFragment implements IFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.v("MojiKonkursi", "onCreateView");
         View view = inflater.inflate(R.layout.fragment_moji_konkursi, container, false);
         progressBar = (ProgressBar)view.findViewById(R.id.progressBar);
         listView = (ListView)view.findViewById(android.R.id.list);
@@ -96,6 +107,50 @@ public class MojiKonkursiFragment extends ListFragment implements IFragment {
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.v("MojiKonkursi", "onActivityCreated");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.v("MojiKonkursi", "onStart");
+        refresh();
+        mainActivity.setActionBarTitle(R.string.title_moji_konkursi);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.v("MojiKonkursi", "onResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.v("MojiKonkursi", "onPause");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.v("MojiKonkursi", "onDestroyView");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.v("MojiKonkursi", "onDestroy");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.v("MojiKonkursi", "onDetach");
+    }
+
     private void showProgress(boolean isBusy) {
         if (refreshBtn != null) {
             if (isBusy) {
@@ -107,20 +162,6 @@ public class MojiKonkursiFragment extends ListFragment implements IFragment {
         if (progressBar != null) {
             progressBar.setVisibility(isBusy && refreshBtn == null ? View.VISIBLE : View.GONE);
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        refresh();
-        mainActivity.setActionBarTitle(R.string.title_moji_konkursi);
-
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mainActivity = (IMainActivity)activity;
     }
 
     @Override

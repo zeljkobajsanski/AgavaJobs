@@ -11,21 +11,18 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textSize="16dip"
-            android:capitalize="sentences"
             android:textColor="@color/white"
             style="@style/Theme.AppCompat.Light.DarkActionBar"/>
         <TextView
             android:id="@+id/period"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:capitalize="sentences"
             android:textColor="@color/muted"
             android:theme="@style/Widget.AppCompat.EditText"/>
         <TextView
             android:id="@+id/opis"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:capitalize="sentences"
             android:textColor="@color/muted"
             android:theme="@style/Widget.AppCompat.EditText"/>
     </LinearLayout>

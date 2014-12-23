@@ -445,6 +445,10 @@ public class HttpService {
         return poslovi;
     }
 
+    public void ping() throws IOException {
+        httpGet(API_URL + "korisnici/ping");
+    }
+
     private List<Posao> vratiPoslove(String url) throws IOException, JSONException {
         String response = httpGet(url);
         JSONArray result = new JSONArray(response);
@@ -491,4 +495,6 @@ public class HttpService {
         }
         throw new IOException("Nothing returned");
     }
+
+
 }

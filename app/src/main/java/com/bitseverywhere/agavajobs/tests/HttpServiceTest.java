@@ -51,4 +51,8 @@ public class HttpServiceTest extends InstrumentationTestCase {
         List<Posao> poslovi = HttpService.getInstance().vratiMojeKonkurse(3232);
         Assert.assertTrue(poslovi.size() > 0);
     }
+
+    public void testPing() throws IOException {
+        HttpService.getInstance().ping();
+    }
 }

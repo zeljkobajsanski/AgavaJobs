@@ -124,22 +124,42 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             id = getArguments().getInt(ID);
         }
         setHasOptionsMenu(true);
-        drzaveAdapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner);
-        drzaveAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        zeljenaMestaRadaAdapter = new ArrayAdapter(getActivity(), R.layout.checked_list_item);
-        zeljenaMestaRadaAdapter.setNotifyOnChange(true);
-        stepenStrucneSpremeAdapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner);
-        stepenStrucneSpremeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mestaAdapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner);
-        mestaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        delatnostiAdapter = new ArrayAdapter<>(getActivity(), R.layout.simple_spinner);
-        delatnostiAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        zanimanjaAdapter = new ArrayAdapter<>(getActivity(), R.layout.simple_spinner);
-        zanimanjaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        radnoIskustvoAdapter = new RadnoIskustvoAdapter(getActivity());
-        prihvatljivaZanimanjaAdapter = new ArrayAdapter<Zanimanje>(getActivity(), R.layout.checked_list_item);
-        pasosiAdapter = new ArrayAdapter<Drzava>(getActivity(), R.layout.checked_list_item);
-        jeziciAdapter = new ArrayAdapter<Jezik>(getActivity(), R.layout.checked_list_item);
+        if (drzaveAdapter == null) {
+            drzaveAdapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner);
+            drzaveAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        }
+        if (zeljenaMestaRadaAdapter == null) {
+            zeljenaMestaRadaAdapter = new ArrayAdapter(getActivity(), R.layout.checked_list_item);
+            zeljenaMestaRadaAdapter.setNotifyOnChange(true);
+        }
+        if (stepenStrucneSpremeAdapter == null) {
+            stepenStrucneSpremeAdapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner);
+            stepenStrucneSpremeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        }
+        if (mestaAdapter == null) {
+            mestaAdapter = new ArrayAdapter(getActivity(), R.layout.simple_spinner);
+            mestaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        }
+        if (delatnostiAdapter == null) {
+            delatnostiAdapter = new ArrayAdapter<>(getActivity(), R.layout.simple_spinner);
+            delatnostiAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        }
+        if (zanimanjaAdapter == null) {
+            zanimanjaAdapter = new ArrayAdapter<>(getActivity(), R.layout.simple_spinner);
+            zanimanjaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        }
+        if (radnoIskustvoAdapter == null) {
+            radnoIskustvoAdapter = new RadnoIskustvoAdapter(getActivity());
+        }
+        if (prihvatljivaZanimanjaAdapter == null) {
+            prihvatljivaZanimanjaAdapter = new ArrayAdapter<Zanimanje>(getActivity(), R.layout.checked_list_item);
+        }
+        if (pasosiAdapter == null) {
+            pasosiAdapter = new ArrayAdapter<Drzava>(getActivity(), R.layout.checked_list_item);
+        }
+        if (jeziciAdapter == null) {
+            jeziciAdapter = new ArrayAdapter<Jezik>(getActivity(), R.layout.checked_list_item);
+        }
     }
 
     @Override
@@ -429,6 +449,8 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         mainActivity.setActionBarTitle(R.string.title_biografija);
         if (biografija == null) {
             refresh();
+        } else {
+            setBiografija(biografija);
         }
     }
 
@@ -463,11 +485,13 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         String bIme = ime.getText().toString();
         if (TextUtils.isEmpty(bIme)) {
             ime.setError("Unesite ime");
+            ime.requestFocus();
             return;
         }
         String bPrezime = prezime.getText().toString();
         if (TextUtils.isEmpty(bPrezime)) {
             prezime.setError("Unesite prezime");
+            prezime.requestFocus();
             return;
         }
         String bMobilni = mobilniTelefon.getText().toString();
@@ -475,6 +499,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         if (TextUtils.isEmpty(bMobilni) && TextUtils.isEmpty(bFiksni)) {
             mobilniTelefon.setError("Unesite mobilni ili fiksni telefon");
             fiksniTelefon.setError("Unesite mobilni ili fiksni telefon");
+            fiksniTelefon.requestFocus();
             return;
         }
         mobilniTelefon.setError(null);
@@ -483,6 +508,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         String bEmail = email.getText().toString();
         if (TextUtils.isEmpty(bEmail)) {
             email.setError("Unesite e-mail");
+            email.requestFocus();
             return;
         }
 
@@ -607,12 +633,22 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
                 zensko.setChecked(true);
             }
             if (biografija.getProfil() != null) {
-                profil.setImageBitmap(ImageUtils.getBitmapFromStringBase64(biografija.getProfil()));
+                Bitmap img = ImageUtils.getBitmapFromStringBase64(biografija.getProfil());
+                if (img != null) {
+                    profil.setImageBitmap(img);
+                } else {
+                    profil.setImageDrawable(getResources().getDrawable(R.drawable.head));
+                }
             } else {
                 profil.setImageDrawable(getResources().getDrawable(R.drawable.head));
             }
             if (biografija.getFigura() != null) {
-                figura.setImageBitmap(ImageUtils.getBitmapFromStringBase64(biografija.getFigura()));
+                Bitmap img = ImageUtils.getBitmapFromStringBase64(biografija.getFigura());
+                if (img != null) {
+                    figura.setImageBitmap(img);
+                } else {
+                    figura.setImageDrawable(getResources().getDrawable(R.drawable.siluete));
+                }
             } else {
                 figura.setImageDrawable(getResources().getDrawable(R.drawable.siluete));
             }
@@ -742,7 +778,7 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
             final String dateFormat = "dd.MM.yyyy";
             final Calendar calendar = Calendar.getInstance();
             if (biografija != null && biografija.getDatumRodjenja() != null) {
-                Date date = new Date();
+                Date date = null;
                 try {
                     date = new SimpleDateFormat(dateFormat).parse(biografija.getDatumRodjenja());
                 } catch (ParseException e) {

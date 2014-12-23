@@ -14,7 +14,7 @@ public class DummyStarterActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("USER_ID", 34);
+        intent.putExtra("USER_ID", 74);
         startActivity(intent);
 
     }

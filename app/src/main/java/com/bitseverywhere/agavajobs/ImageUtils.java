@@ -12,9 +12,13 @@ public class ImageUtils {
 
     public static Bitmap getBitmapFromStringBase64(String source) {
         if (source != null && source.length() > 22) {
-            byte[] decodedString = Base64.decode(source.substring(22), Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-            return decodedByte;
+            try {
+                byte[] decodedString = Base64.decode(source.substring(22), Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                return decodedByte;
+            } catch (Error e) {
+                return null;
+            }
         }
         return null;
     }
