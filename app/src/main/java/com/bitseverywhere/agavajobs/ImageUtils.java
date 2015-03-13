@@ -25,11 +25,15 @@ public class ImageUtils {
 
     public static String getStringBase64FromBitmap(Bitmap imageBitmap) {
         if (imageBitmap != null) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] b = baos.toByteArray();
-            String encodedImage = Base64.encodeToString(b, Base64.NO_WRAP);
-            return "data:image/png;base64," + encodedImage;
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] b = baos.toByteArray();
+                String encodedImage = Base64.encodeToString(b, Base64.NO_WRAP);
+                return "data:image/png;base64," + encodedImage;
+            } catch (Error e) {
+                return null;
+            }
         }
         return null;
     }

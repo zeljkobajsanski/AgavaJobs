@@ -862,18 +862,25 @@ public class BiografijaFragment extends android.support.v4.app.Fragment implemen
         if (requestCode == REQUEST_PROFILE_PICTURE && resultCode == Activity.RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            profil.setImageBitmap(imageBitmap);
+
             if (biografija != null) {
-                biografija.setProfil(ImageUtils.getStringBase64FromBitmap(imageBitmap));
+                String image = ImageUtils.getStringBase64FromBitmap(imageBitmap);
+                if (image != null) {
+                    biografija.setProfil(image);
+                    profil.setImageBitmap(imageBitmap);
+                }
             }
         }
         if (requestCode == REQUEST_FIGURE_PICTURE && resultCode == Activity.RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             if (biografija != null) {
-                biografija.setFigura(ImageUtils.getStringBase64FromBitmap(imageBitmap));
+                String image = ImageUtils.getStringBase64FromBitmap(imageBitmap);
+                if (image != null) {
+                    biografija.setFigura(image);
+                    figura.setImageBitmap(imageBitmap);
+                }
             }
-            figura.setImageBitmap(imageBitmap);
         }
     }
 
